@@ -1,2 +1,9 @@
-# ADEV-3005-Python
-ADEV-3005-FTE01 Programming in Python
+# Weather Processing App
+
+# Introduction
+This is the final project for ADEV-3005-Python course.
+
+# Todo list
+place holder
+
+
