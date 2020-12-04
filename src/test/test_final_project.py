@@ -17,16 +17,17 @@ class TestScraping(unittest.TestCase):
         year = 2020
         month = 1
         url = ("http://climate.weather.gc.ca/"
-                           + "climate_data/daily_data_e.html"
-                           + "?StationID=27174"
-                           + "&timeframe=2&StartYear=1840"
-                           + "&EndYear=" + str(year)
-                           + "&Day=1&Year=" + str(year)
-                           + "&Month=" + str(month) + "#")
+               + "climate_data/daily_data_e.html"
+               + "?StationID=27174"
+               + "&timeframe=2&StartYear=1840"
+               + "&EndYear=" + str(year)
+               + "&Day=1&Year=" + str(year)
+               + "&Month=" + str(month) + "#")
         self.myweather.start_scraping(url, year)
         self.assertIs(type(self.myweather.weather), dict)
         daily = self.myweather.weather[list(self.myweather.weather.keys())[0]]
         self.assertIs(type(daily), dict)
+
 
 class TestDatabase(unittest.TestCase):
     def setUp(self):
@@ -43,6 +44,7 @@ class TestDatabase(unittest.TestCase):
                         min_temp, max_temp, avg_temp from samples"""
         self.assertIsNotNone(cur.execute(sql_select))
 
+
 class TestPlot(unittest.TestCase):
     def setUp(self):
         self.myplot = PlotOperations()
@@ -50,13 +52,14 @@ class TestPlot(unittest.TestCase):
     def test_plot_type(self):
         self.assertIsInstance(self.myplot, PlotOperations)
 
+
 class TestWeatherProcessor(unittest.TestCase):
     def setUp(self):
         self.myweatherprocessor = WeatherProcessor()
 
     def test_weather_processor_type(self):
         self.assertIsInstance(self.myweatherprocessor, WeatherProcessor)
-        
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
