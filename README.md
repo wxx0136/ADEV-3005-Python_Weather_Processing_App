@@ -4,7 +4,7 @@
 This is the final project for ADEV-3005-Python course.
 
 # Todo list
-* Part 1 - Scraping - 30% [Done, need docs later]
+* Part 1 - Scraping - 30% [xwei: unit test, need docs later]
 * Part 2 - Database - 20%
 * Part 3 - Plotting - 15%
 * Part 4 - User Interaction - 20%
