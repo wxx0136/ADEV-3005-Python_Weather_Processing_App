@@ -3,7 +3,7 @@ import sqlite3
 from scrape_weather import WeatherScraper
 
 
-# from db_operations import DBOperations
+from db_operations import DBOperations
 # from plot_operations import PlotOperations
 # from weather_processor import WeatherProcessor
 
@@ -31,22 +31,22 @@ class TestScraping(unittest.TestCase):
         self.assertIs(type(daily), dict)
 
 
-# class TestDatabase(unittest.TestCase):
-#     def setUp(self):
-#         self.dbname = "weather.sqlite"
-#         self.mydb = DBOperations(self.dbname)
-#
-#     def test_db_type(self):
-#         self.assertIsInstance(self.mydb, DBOperations)
-#
-#     def test_db_structure(self):
-#         conn = sqlite3.connect(self.dbname)
-#         cur = conn.cursor()
-#         sql_select = """select id, sample_date, location,
-#                         min_temp, max_temp, avg_temp from samples"""
-#         self.assertIsNotNone(cur.execute(sql_select))
-#
-#
+class TestDatabase(unittest.TestCase):
+    def setUp(self):
+        self.dbname = "weather.sqlite"
+        self.mydb = DBOperations(self.dbname)
+
+    def test_db_type(self):
+        self.assertIsInstance(self.mydb, DBOperations)
+
+    def test_db_structure(self):
+        conn = sqlite3.connect(self.dbname)
+        cur = conn.cursor()
+        sql_select = """select id, sample_date, location,
+                        min_temp, max_temp, avg_temp from samples"""
+        self.assertIsNotNone(cur.execute(sql_select))
+
+
 # class TestPlot(unittest.TestCase):
 #     def setUp(self):
 #         self.myplot = PlotOperations()
