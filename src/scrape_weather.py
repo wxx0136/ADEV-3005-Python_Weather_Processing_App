@@ -1,4 +1,4 @@
-import re
+import calendar
 import urllib.request
 from html.parser import HTMLParser
 
@@ -7,7 +7,7 @@ class WeatherScraper(HTMLParser):
     def __init__(self):
         super().__init__()
         self.data = ''
-        self.readingFlag = False
+        self.reading_temp_flag = False
         self.element_counter = 0
 
     def error(self, message):
@@ -15,43 +15,69 @@ class WeatherScraper(HTMLParser):
 
     def handle_starttag(self, tag, attrs):
         if tag == 'td':
-            self.readingFlag = True
-            print(self.element_counter)
-            if self.element_counter == 10:
-                self.element_counter = 0
+            self.reading_temp_flag = True
 
     def handle_data(self, data):
-        if self.readingFlag:
-            if self.element_counter < 3:
-                self.data += data + ','
-            self.element_counter += 1
+        if self.reading_temp_flag:
+            if not data in ['LegendM', 'LegendE', ' ', 'LegendT']:
+                if data == 'E':
+                    self.data = self.data[:-1]
+                self.data += data.strip() + ','
 
     def handle_endtag(self, tag):
         if tag == 'td':
-            self.readingFlag = False
-
-
-    def cleanse(self):
-        """ Remove all the space/blank """
-        self.data = re.sub('\s+', ' ', self.data)
+            self.reading_temp_flag = False
 
     def get_data(self):
-        self.cleanse()
         return self.data
 
 
-def my_filter():
-    wScraper = WeatherScraper()
-    url_example = 'http://www.weather.com.cn/html/weather/101210501.shtml'
-    url = 'https://climate.weather.gc.ca/climate_data/daily_data_e.html?StationID=27174&timeframe=2&StartYear=1840&EndYear=2018&Day=1&Year=2018&Month=5'
-    with urllib.request.urlopen(
-            url) as response:
+def get_weather_dict(year: int, month: int) -> dict:
+    # Get raw info from HTML parse
+    url = ("http://climate.weather.gc.ca/"
+           + "climate_data/daily_data_e.html"
+           + "?StationID=27174"
+           + "&timeframe=2&StartYear=1840"
+           + "&EndYear=" + str(year)
+           + "&Day=1&Year=" + str(year)
+           + "&Month=" + str(month) + "#")
+    my_scraper = WeatherScraper()
+    with urllib.request.urlopen(url) as response:
         html = str(response.read())
-        wScraper.feed(html)
-    weather = wScraper.get_data()
-    # weather = weather.split()
-    return weather
+        my_scraper.feed(html)
+    result = my_scraper.get_data().split(',')
+
+    print('debug: result')
+    print(str(result))
+
+    # Convert raw info to weather list
+    step = 11
+    daily_temps_list = []
+    for item in [result[i:i + step] for i in range(0, len(result), step)]:
+        my_dict = {"Max": str(item[0]), "Min": str(item[1]), "Mean": str(item[2])}
+        daily_temps_list.append(my_dict)
+
+    print('debug: daily_temps_list')
+    print(str(daily_temps_list))
+
+    # Zip weather list items with the date
+    weather_dict = {}
+    day = 1
+    for item in daily_temps_list:
+        if day <= calendar.monthrange(year, month)[1]:
+            if day < 10:
+                data_day = '0' + str(day)
+            else:
+                data_day = str(day)
+            data_key = str(year) + '-' + str(month) + '-' + data_day
+            weather_dict[data_key] = item
+            day += 1
+
+    print('debug: weather_dict')
+    print(str(weather_dict))
+
+    return weather_dict
 
 
 if __name__ == '__main__':
-    print(my_filter())
+    print(str(get_weather_dict(2018, 2)))
