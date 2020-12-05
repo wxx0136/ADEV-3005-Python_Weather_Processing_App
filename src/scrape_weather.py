@@ -34,7 +34,6 @@ class WeatherScraper(HTMLParser):
         self.data = re.sub(r'[[({] | []}),;:]', ' ', self.data)
 
     def get_data(self):
-        self.cleanse()
         return self.data
 
     def start_scraping(self, url, year):
