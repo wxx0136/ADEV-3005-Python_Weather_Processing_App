@@ -1,11 +1,13 @@
 import calendar
 import urllib.request
 from html.parser import HTMLParser
+import re
 
 
 class WeatherScraper(HTMLParser):
     def __init__(self):
         super().__init__()
+        self.weather = None
         self.data = ''
         self.reading_temp_flag = False
         self.element_counter = 0
@@ -28,8 +30,15 @@ class WeatherScraper(HTMLParser):
         if tag == 'td':
             self.reading_temp_flag = False
 
+    def cleanse(self):
+        self.data = re.sub(r'[[({] | []}),;:]', ' ', self.data)
+
     def get_data(self):
+        self.cleanse()
         return self.data
+
+    def start_scraping(self, url, year):
+        pass
 
 
 def get_weather_dict(year: int, month: int) -> dict:
