@@ -13,47 +13,42 @@ import sqlite3
 
 
 class DBOperations:
-    """
-        create this database context manager
-    """
+    """ create this database context manager """
 
-    def __init__(self, db_name: str):
-        """
-            build a new database connection
-        """
-        self.db_name = db_name
+    def __init__(self, name: str):
+        """ build a new database connection """
+
+        self.db_name = name
         self.conn = sqlite3.connect(self.db_name)
         self.cursor = self.conn.cursor()
 
     def connection_closed(self):
-        """
-            close this database connection
-        """
+        """ close this database connection """
+
         self.cursor.close()
         self.conn.close()
 
-    def table_init(self, table_name: str):
-        """
-        table_init: create a new table in the database
-        :return: none
-        """
-        # cursor.execute("drop table %s;" % table_name)
+    def table_init(self, name: str):
+        """ create a new table in the database """
+
+        # self.cursor.execute("drop table %s;" % name)
         sql = """create table if not exists %s (id integer primary key autoincrement not null,
-                                    date text not null,
+                                    sample_date text not null,
                                     location text not null default %s,
                                     min_temp real not null,
                                     max_temp real not null,
-                                    avg_temp real not null); """ % (table_name, "'Winnipeg, MB'")
+                                    avg_temp real not null); """ % (name, "'Winnipeg, MB'")
         self.cursor.execute(sql)
         self.conn.commit()
 
-    def insert_dictionary(self, table_name: str, input_dict: dict):
-
+    def insert_dictionary(self, table: str, input_dict: dict):
         """
         receive a dictionary of dictionaries and correctly insert the data into the DB
+        :param table:
         :param input_dict:
         :return: none
         """
+
         new_list = []
         for key, value in input_dict.items():
             new_row = [key]
@@ -68,35 +63,32 @@ class DBOperations:
         # self.conn.commit()
 
         for item in new_list:
-            sql = """INSERT INTO %s """ % table_name + """(date,max_temp,min_temp,avg_temp) VALUES (?,?,?,?)"""
-            self.cursor.execute(sql,item)
+            sql = """INSERT INTO %s """ % table + """(sample_date,max_temp,min_temp,avg_temp) VALUES (?,?,?,?)"""
+            self.cursor.execute(sql, item)
         self.conn.commit()
 
-    def print_all(self, table_name: str):
-        """
-        print out the data currently in the database.
-        :return: none
-        """
-        sql = """select * from %s;""" % table_name
+    def print_all(self, table: str):
+        """ print out the data currently in the database. """
+        sql = """select * from %s;""" % table
         self.cursor.execute(sql)
         print("Current data in this database: ", self.cursor.fetchall())
         self.conn.commit()
 
 
 if __name__ == '__main__':
-    db_name = 'weather.sqlite'
-    table_name = 'weather'
-    db = DBOperations(db_name)
+    my_db_name = 'weather.sqlite'
+    my_table_name = 'samples'
+    db = DBOperations(my_db_name)
 
-    db.table_init(table_name)
+    db.table_init(my_table_name)
 
     weather = {
         "2018-06-01": {"Max": 12.0, "Min": 5.6, "Mean": 7.1},
         "2018-06-02": {"Max": 22.2, "Min": 11.1, "Mean": 15.5},
         "2018-06-03": {"Max": 31.3, "Min": 29.9, "Mean": 30.0}
     }
-    db.insert_dictionary(table_name, weather)
+    db.insert_dictionary(my_table_name, weather)
 
-    db.print_all(table_name)
+    db.print_all(my_table_name)
 
     db.connection_closed()

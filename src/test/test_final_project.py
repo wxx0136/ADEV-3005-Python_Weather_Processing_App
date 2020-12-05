@@ -33,7 +33,7 @@ class TestScraping(unittest.TestCase):
 
 class TestDatabase(unittest.TestCase):
     def setUp(self):
-        self.dbname = "weather.sqlite"
+        self.dbname = "../weather.sqlite"
         self.mydb = DBOperations(self.dbname)
 
     def test_db_type(self):
