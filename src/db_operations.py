@@ -10,6 +10,9 @@
 """
 
 import sqlite3
+from datetime import datetime
+from common import is_number
+
 from scrape_weather import WeatherScraper
 
 
@@ -34,14 +37,14 @@ class DBOperations:
     def initialize_db(self):
         """ create a 'samples' table in the database """
         # self.cursor.execute("drop table %s;" % name)
-        sql_initialize_db = """create table if not exists samples (id integer primary key autoincrement not null,
-                                    sample_date text not null UNIQUE,
-                                    location text not null default %s,
-                                    min_temp real not null,
-                                    max_temp real not null,
-                                    avg_temp real not null); """ % "'StationID=27174'"
-        self.cursor.execute(sql_initialize_db)
-        self.conn.commit()
+        with DBOperations(self.db_name) as DBCM:
+            sql_initialize_db = """create table if not exists samples (id integer primary key autoincrement not null,
+                                        sample_date text not null UNIQUE,
+                                        location text not null default %s,
+                                        min_temp real not null,
+                                        max_temp real not null,
+                                        avg_temp real not null); """ % "'StationID=27174'"
+            DBCM.execute(sql_initialize_db)
 
     def save_data(self, data_source: dict):
         """
@@ -53,20 +56,26 @@ class DBOperations:
         for k, v in data_source.items():
             new_row = [k]
             for nest_key, nest_value in v.items():
-                new_row.append(nest_value)
+                if is_number(nest_value):
+                    new_row.append(nest_value)
+                else:
+                    new_row.append('')
             new_list.append(tuple(new_row))
 
-        for item in new_list:
-            sql_save_data = """INSERT OR IGNORE INTO samples (sample_date,max_temp,min_temp,avg_temp) VALUES (?,?,?,?);"""
-            self.cursor.execute(sql_save_data, item)
-        self.conn.commit()
+        print(datetime.now())
+        with DBOperations(self.db_name) as DBCM:
+            sql_save_data = """INSERT OR IGNORE INTO samples (sample_date,max_temp,min_temp,avg_temp) VALUES (?,?,?,
+            ?); """
+            for item in new_list:
+                DBCM.execute(sql_save_data, item)
+        print(datetime.now())
 
     def purge_data(self):
-        sql_purge_data_1 = """DELETE FROM samples;"""
-        sql_purge_data_2 = """DELETE FROM sqlite_sequence WHERE name = 'samples';"""
-        self.cursor.execute(sql_purge_data_1)
-        self.cursor.execute(sql_purge_data_2)
-        self.conn.commit()
+        with DBOperations(self.db_name) as DBCM:
+            sql_purge_data_1 = """DELETE FROM samples;"""
+            sql_purge_data_2 = """DELETE FROM sqlite_sequence WHERE name = 'samples';"""
+            DBCM.execute(sql_purge_data_1)
+            DBCM.execute(sql_purge_data_2)
 
 
 if __name__ == '__main__':
@@ -76,14 +85,13 @@ if __name__ == '__main__':
 
     my_scraper = WeatherScraper()
     my_scraper.start_scraping('', 2018)
-    my_scraper.start_scraping('', 2019)
     my_scraper.start_scraping('', 2020)
 
     mydb.save_data(my_scraper.weather)
-    for key, value in my_scraper.weather.items():
-        print(key + ': ' + str(value))
+    # for key, value in my_scraper.weather.items():
+    #     print(key + ': ' + str(value))
 
-    with DBOperations('weather.sqlite') as DBCM:
+    with DBOperations('weather.sqlite') as cursor:
         sql = """select * from samples"""
-        DBCM.execute(sql)
-        print(DBCM.fetchall())
+        cursor.execute(sql)
+        print(cursor.fetchall())
