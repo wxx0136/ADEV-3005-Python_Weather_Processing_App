@@ -73,9 +73,9 @@ class WeatherScraper(HTMLParser):
             my_dict = {"Max": str(item[0]), "Min": str(item[1]), "Mean": str(item[2])}
             daily_temps_list.append(my_dict)
 
-        print('debug: daily_temps_list')
-        for item in daily_temps_list:
-            print(str(item))
+        # print('debug: daily_temps_list')
+        # for item in daily_temps_list:
+        #     print(str(item))
 
         # Zip weather list items with the date
         day = 1
@@ -100,6 +100,7 @@ class WeatherScraper(HTMLParser):
 
 
 if __name__ == '__main__':
-    myws = WeatherScraper()
-    myws.get_weather_dict(2018, 5)
-    # print(str(myws.weather))
+    my_scraper = WeatherScraper()
+    my_scraper.get_weather_dict(2018, 5)
+    for key, value in my_scraper.weather.items():
+        print(key + ': ' + str(value))
