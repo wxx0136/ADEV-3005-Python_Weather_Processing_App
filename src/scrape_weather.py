@@ -54,14 +54,14 @@ class WeatherScraper(HTMLParser):
             self.feed(html)
         result = self.get_data().split(',')
 
-        print('debug: result')
-        count = 0
-        for r in result:
-            print(str(r) + ',', end='')
-            count += 1
-            if count == 11:
-                print()
-                count = 0
+        # print('debug: result')
+        # count = 0
+        # for r in result:
+        #     print(str(r) + ',', end='')
+        #     count += 1
+        #     if count == 11:
+        #         print()
+        #         count = 0
 
         # Convert raw info to weather list.
         # From the website, each row has 11 column, and the last 4 lines are useless(sum, avg, xtrm, summary)
@@ -92,9 +92,9 @@ class WeatherScraper(HTMLParser):
                     self.weather[data_key] = item
                 day += 1
 
-        print('debug: month_dict')
-        for key, value in month_dict.items():
-            print(key + ':' + str(value))
+        # print('debug: month_dict')
+        # for key, value in month_dict.items():
+        #     print(key + ':' + str(value))
 
         return month_dict
 
