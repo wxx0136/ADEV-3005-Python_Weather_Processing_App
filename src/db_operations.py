@@ -10,7 +10,6 @@
 """
 
 import sqlite3
-from datetime import datetime
 from common import is_number
 
 from scrape_weather import WeatherScraper
@@ -19,9 +18,9 @@ from scrape_weather import WeatherScraper
 class DBOperations:
     """ create this database context manager """
 
-    def __init__(self, name: str):
+    def __init__(self, path: str):
         """ build a new database connection """
-        self.db_name = name
+        self.db_name = path
         self.conn = sqlite3.connect(self.db_name)
         self.cursor = self.conn.cursor()
 
@@ -65,8 +64,8 @@ class DBOperations:
         with DBOperations(self.db_name) as DBCM:
             sql_save_data = """INSERT OR IGNORE INTO samples (sample_date,max_temp,min_temp,avg_temp) VALUES (?,?,?,
             ?); """
-            for item in new_list:
-                DBCM.execute(sql_save_data, item)
+            for list_item in new_list:
+                DBCM.execute(sql_save_data, list_item)
 
     def fetch_data(self, year: int) -> list:
         with DBOperations(self.db_name) as DBCM:
