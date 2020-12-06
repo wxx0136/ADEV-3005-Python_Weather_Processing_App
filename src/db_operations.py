@@ -18,9 +18,9 @@ from scrape_weather import WeatherScraper
 class DBOperations:
     """ create this database context manager """
 
-    def __init__(self, name: str):
+    def __init__(self, path: str):
         """ build a new database connection """
-        self.db_name = name
+        self.db_name = path
         self.conn = sqlite3.connect(self.db_name)
         self.cursor = self.conn.cursor()
 
