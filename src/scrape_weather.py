@@ -1,6 +1,7 @@
 import calendar
 import urllib.request
 from html.parser import HTMLParser
+import datetime
 
 
 class WeatherScraper(HTMLParser):
@@ -74,7 +75,9 @@ class WeatherScraper(HTMLParser):
                 str_day = ('0' + str(day)) if day < 10 else str(day)
                 str_month = ('0' + str(month)) if month < 10 else str(month)
                 data_key = str(year) + '-' + str_month + '-' + str_day
-                self.weather[data_key] = item
+                # today's data is always blank
+                if data_key != str(datetime.date.today()):
+                    self.weather[data_key] = item
                 day += 1
 
         # print('debug: weather_dict')
