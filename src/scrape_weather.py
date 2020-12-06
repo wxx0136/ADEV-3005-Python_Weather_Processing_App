@@ -1,7 +1,7 @@
 import calendar
 import urllib.request
 from html.parser import HTMLParser
-from datetime import date, timedelta
+from datetime import date
 
 
 class WeatherScraper(HTMLParser):
