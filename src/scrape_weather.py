@@ -1,6 +1,7 @@
 import calendar
 import urllib.request
 from html.parser import HTMLParser
+import datetime
 
 
 class WeatherScraper(HTMLParser):
@@ -17,12 +18,15 @@ class WeatherScraper(HTMLParser):
         if tag == 'td':
             self.reading_temp_flag = True
 
-    def handle_data(self, data):
+    def handle_data(self, data: str):
         if self.reading_temp_flag:
-            if data not in ['LegendM', 'LegendE', ' ', 'LegendT', 'LegendCarer']:
-                if data == 'E':
-                    self.data = self.data[:-1]
-                self.data += data.strip() + ','
+            if data not in ['LegendM', 'LegendE', ' ', 'LegendT', 'LegendCarer', 'E']:
+                # if data == 'E':
+                #     self.data = self.data[:-1]
+                if data == 'M':
+                    self.data += '' + ','
+                else:
+                    self.data += data.strip() + ','
 
     def handle_endtag(self, tag):
         if tag == 'td':
@@ -31,11 +35,12 @@ class WeatherScraper(HTMLParser):
     def get_data(self):
         return self.data
 
-    def start_scraping(self, url: str, year: int):
+    def start_scraping(self, url: str, year: int) -> None:
+        print('we never use this ', url)
         for i in range(1, 12):
             self.get_weather_dict(year, i)
 
-    def get_weather_dict(self, year: int, month: int):
+    def get_weather_dict(self, year: int, month: int) -> dict:
         # Get raw info from HTML parse
         url = ("http://climate.weather.gc.ca/"
                + "climate_data/daily_data_e.html"
@@ -50,7 +55,13 @@ class WeatherScraper(HTMLParser):
         result = self.get_data().split(',')
 
         # print('debug: result')
-        # print(str(result))
+        # count = 0
+        # for r in result:
+        #     print(str(r) + ',', end='')
+        #     count += 1
+        #     if count == 11:
+        #         print()
+        #         count = 0
 
         # Convert raw info to weather list.
         # From the website, each row has 11 column, and the last 4 lines are useless(sum, avg, xtrm, summary)
@@ -63,24 +74,33 @@ class WeatherScraper(HTMLParser):
             daily_temps_list.append(my_dict)
 
         # print('debug: daily_temps_list')
-        # print(str(daily_temps_list))
+        # for item in daily_temps_list:
+        #     print(str(item))
 
         # Zip weather list items with the date
         day = 1
+        month_dict = {}
         for item in daily_temps_list:
             # Get the days of that month
             if day <= calendar.monthrange(year, month)[1]:
                 str_day = ('0' + str(day)) if day < 10 else str(day)
                 str_month = ('0' + str(month)) if month < 10 else str(month)
                 data_key = str(year) + '-' + str_month + '-' + str_day
-                self.weather[data_key] = item
+                # today's data is always blank
+                if data_key != str(datetime.date.today()):
+                    month_dict[data_key] = item
+                    self.weather[data_key] = item
                 day += 1
 
-        # print('debug: weather_dict')
-        # print(str(self.weather))
+        # print('debug: month_dict')
+        # for key, value in month_dict.items():
+        #     print(key + ':' + str(value))
+
+        return month_dict
 
 
 if __name__ == '__main__':
-    myws = WeatherScraper()
-    myws.get_weather_dict(2020, 12)
-    print(str(myws.weather))
+    my_scraper = WeatherScraper()
+    my_scraper.get_weather_dict(2018, 5)
+    for key, value in my_scraper.weather.items():
+        print(key + ': ' + str(value))
