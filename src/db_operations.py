@@ -62,13 +62,18 @@ class DBOperations:
                     new_row.append('')
             new_list.append(tuple(new_row))
 
-        print(datetime.now())
         with DBOperations(self.db_name) as DBCM:
             sql_save_data = """INSERT OR IGNORE INTO samples (sample_date,max_temp,min_temp,avg_temp) VALUES (?,?,?,
             ?); """
             for item in new_list:
                 DBCM.execute(sql_save_data, item)
-        print(datetime.now())
+
+    def fetch_data(self, year: int) -> list:
+        with DBOperations(self.db_name) as DBCM:
+            sql_fetch_year_date = f"""SELECT * FROM samples WHERE sample_date LIKE '{year}%';"""
+            DBCM.execute(sql_fetch_year_date)
+            fetch_weather = DBCM.fetchall()
+        return fetch_weather
 
     def purge_data(self):
         with DBOperations(self.db_name) as DBCM:
@@ -79,19 +84,17 @@ class DBOperations:
 
 
 if __name__ == '__main__':
-    mydb = DBOperations('weather.sqlite')
-    mydb.initialize_db()
-    mydb.purge_data()
-
     my_scraper = WeatherScraper()
     my_scraper.start_scraping('', 2018)
     my_scraper.start_scraping('', 2020)
+
+    mydb = DBOperations('weather.sqlite')
+    mydb.initialize_db()
+    mydb.purge_data()
 
     mydb.save_data(my_scraper.weather)
     # for key, value in my_scraper.weather.items():
     #     print(key + ': ' + str(value))
 
-    with DBOperations('weather.sqlite') as cursor:
-        sql = """select * from samples"""
-        cursor.execute(sql)
-        print(cursor.fetchall())
+    for item in mydb.fetch_data(2020):
+        print(item)
