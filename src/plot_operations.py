@@ -1,6 +1,8 @@
 """
-this module plots the weather data from data fetched from database
-include
+this module plots the weather  data fetched from database
+include methods:
+generate_box_plot is to draw box plot from year to year
+generate_line_plot is to draw line plot from a specific month from a chosen year
 """
 from requests import get
 import matplotlib.pyplot as plt
@@ -12,7 +14,8 @@ from common import is_number
 
 class PlotOperations:
     """
-    plot weather details
+    this class is to box plot and line plot
+    weather mean temperatures of year to year or specific month respectively
     """
 
     def __init__(self):
@@ -35,7 +38,7 @@ class PlotOperations:
     #     (368, '2020-01-03', 'StationID=27174', -6.8, -1.0, -3.9)
     # ]
 
-    def generate_box_plot(self, start_year: int, end_year: int) -> str:
+    def generate_box_plot(self, start_year: int, end_year: int) -> dict:
         """
         :param end_year: starting year for box plotting
         :param start_year: ending year for line plotting
@@ -76,9 +79,7 @@ class PlotOperations:
 
         return self.box_plot_path_saving_dict
 
-        # labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-
-    def generate_line_plot(self, specific_month: int, specific_year: int):
+    def generate_line_plot(self, specific_month: int, specific_year: int) -> dict:
         """
         :param specific_month: the chosen month for line plotting
         :param specific_year: the chosen year for line plotting
@@ -120,6 +121,3 @@ if __name__ == '__main__':
     my_plot = PlotOperations()
     print(my_plot.generate_box_plot(2018, 2020))
     print(my_plot.generate_line_plot(3, 2018))
-
-    # PlotOperations.generate_box_plot(2018, 2019)
-    # PlotOperations.generate_line_plot(3, 2018)
