@@ -42,7 +42,7 @@ class PlotOperations:
         """
         :param end_year: starting year for box plotting
         :param start_year: ending year for line plotting
-        :return: returns the generated box plot pictures' saving paths class instance
+        :return: returns the generated box plot images' saving paths class instance
         """
 
         my_db = DBOperations('weather.sqlite')
@@ -72,7 +72,7 @@ class PlotOperations:
             plt.xlabel('Month')
             plt.ylabel('Temperature (Celsius)')
             plt.title(plot_title)
-            save_path = './pictures/' + str(key) + '.jpg'
+            save_path = './images/' + str(key) + '.jpg'
             plt.savefig(save_path)
             self.box_plot_path_saving_dict[str(key)] = save_path
             plt.show()
@@ -83,7 +83,7 @@ class PlotOperations:
         """
         :param specific_month: the chosen month for line plotting
         :param specific_year: the chosen year for line plotting
-        :return: returns the generated line plot pictures' saving paths class instance
+        :return: returns the generated line plot images' saving paths class instance
         """
         my_db = DBOperations('weather.sqlite')
         specific_month_data = []
@@ -100,7 +100,7 @@ class PlotOperations:
         plt.ylabel('Temperature (Celsius)')
         plot_title = 'Daily Temperature Distribution for:' + str(specific_year) + ' - ' + str(specific_month)
         plt.title(plot_title)
-        save_path = './pictures/' + str(specific_year) + '-' + str(specific_month) + '.jpg'
+        save_path = './images/' + str(specific_year) + '-' + str(specific_month) + '.jpg'
         plt.savefig(save_path)
         self.line_plot_path_saving_dict[str(specific_year) + '-' + str(specific_month)] = save_path
         plt.show()
