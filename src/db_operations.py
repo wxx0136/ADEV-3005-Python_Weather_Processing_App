@@ -1,5 +1,5 @@
 """
-    There are one classes in this module.
+    There is one classes in this module.
 
     Class DBOperations is an sqlite database operation.
         __init__: build a new database connection
@@ -67,9 +67,16 @@ class DBOperations:
             for list_item in new_list:
                 DBCM.execute(sql_save_data, list_item)
 
-    def fetch_data(self, year: int) -> list:
+    def fetch_data(self, year: int, month: int = 0) -> list:
+        if month == 0:
+            month_str = ''
+        elif month < 10:
+            month_str = '0' + str(month)
+        else:
+            month_str = str(month)
+
         with DBOperations(self.db_name) as DBCM:
-            sql_fetch_year_date = f"""SELECT * FROM samples WHERE sample_date LIKE '{year}%';"""
+            sql_fetch_year_date = f"""SELECT * FROM samples WHERE sample_date LIKE '{year}-{month_str}%';"""
             DBCM.execute(sql_fetch_year_date)
             fetch_weather = DBCM.fetchall()
         return fetch_weather
@@ -84,7 +91,7 @@ class DBOperations:
 
 if __name__ == '__main__':
     my_scraper = WeatherScraper()
-    my_scraper.start_scraping('', 2018)
+    # my_scraper.start_scraping('', 2018)
     my_scraper.start_scraping('', 2020)
 
     mydb = DBOperations('weather.sqlite')
@@ -95,5 +102,10 @@ if __name__ == '__main__':
     # for key, value in my_scraper.weather.items():
     #     print(key + ': ' + str(value))
 
+    print('years data')
     for item in mydb.fetch_data(2020):
+        print(item)
+
+    print('month data')
+    for item in mydb.fetch_data(2020, 1):
         print(item)
