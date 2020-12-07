@@ -1,7 +1,7 @@
 from requests import get
 import matplotlib.pyplot as plt
 from dateutil import parser
-# from db_operations import DBOperations
+from db_operations import DBOperations
 from scrape_weather import WeatherScraper
 from common import is_number
 
@@ -44,13 +44,17 @@ class PlotOperations:
                 yearly_data.append(monthly_mean_temp)
             years_weather_data.update({current_year: yearly_data})
         # format: {2019:[[Jan],2:[Feb],..,12:[Dec]], 2020: [[Jan],...12:[Dec]]}
+        plot_title = 'Monthly Temperature Distribution for:' + str(start_year) + ' to ' + str(end_year)
 
         for key, value in years_weather_data.items():
             print(key, value)
             plt.boxplot(value, sym="o", whis=1.5)
+            plt.xlabel('Month')
+            plt.ylabel('Temperature (Celsius)')
+            plt.title(plot_title)
             plt.show()
 
-        labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+        # labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
     @staticmethod
     def generate_line_plot(specific_month: int, specific_year: int):
@@ -65,6 +69,10 @@ class PlotOperations:
         print(specific_year, '-', specific_month, ':', specific_month_data)
 
         plt.plot(specific_timestamp, specific_month_data)
+        plt.xlabel('Day')
+        plt.ylabel('Temperature (Celsius)')
+        plot_title = 'Daily Temperature Distribution for:' + str(specific_month) + ' in ' + str(specific_year)
+        plt.title(plot_title)
         plt.show()
 
 
