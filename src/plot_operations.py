@@ -22,16 +22,6 @@ class PlotOperations:
         self.box_plot_path_saving_dict = {}
         self.line_plot_path_saving_dict = {}
 
-    # def get_box_plot_saving_path(self, start_year: int, end_year: int) -> dict:
-    #     """
-    #     :param start_year: the year started
-    #     :param end_year: the year ended
-    #     :return: returns a dictionary of box plot saving paths
-    #     """
-    #     for year in range(start_year, end_year+1):
-    #         self.box_plot_path_saving_dict[str(year)] = self.generate_box_plot(start_year,end_year)
-    #     return self.box_plot_path_saving_dict
-
     # fetched_list_format = [
     #     (366, '2020-01-01', 'StationID=27174', -12.3, -3.5, -7.9),
     #     (367, '2020-01-02', 'StationID=27174', -8.2, -6.0, -7.1),
