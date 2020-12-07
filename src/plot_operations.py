@@ -59,7 +59,7 @@ class PlotOperations:
                 monthly_mean_temp = []
                 for item in monthly_list:
                     if is_number(item[5]):
-                        monthly_mean_temp.append(float(item['Mean']))
+                        monthly_mean_temp.append(float(item[5]))
                         current_year = item[1][:4]
                 yearly_data.append(monthly_mean_temp)
             years_weather_data.update({current_year: yearly_data})
@@ -111,6 +111,7 @@ class PlotOperations:
 if __name__ == '__main__':
     my_scraper = WeatherScraper()
     my_scraper.start_scraping('', 2018)
+    my_scraper.start_scraping('', 2019)
     my_scraper.start_scraping('', 2020)
 
     mydb = DBOperations('weather.sqlite')

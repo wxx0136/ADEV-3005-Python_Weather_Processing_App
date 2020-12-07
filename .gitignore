@@ -133,4 +133,4 @@ dmypy.json
 /src/weather.sqlite
 
 #ignore pictures
-.pictures/
+/src/pictures/
