@@ -36,11 +36,11 @@ class WeatherScraper(HTMLParser):
         return self.data
 
     def start_scraping(self, url: str, year: int) -> None:
-        print('Scraping data of year:{}'.format(year))
         for i in range(1, 13):
             self.get_weather_dict(year, i)
 
     def get_weather_dict(self, year: int, month: int) -> dict:
+        print('Scraping data of year:{0}, month:{1}'.format(year, month))
         days_of_current_month = calendar.monthrange(year, month)[1]
         # Get raw info from HTML parse
         url = ("http://climate.weather.gc.ca/"

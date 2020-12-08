@@ -63,11 +63,10 @@ class PlotOperations:
         output_dir = "images"
         mkdir_p(output_dir)
         file_path = '{0}/{1}'.format(output_dir, file_name)
-        plt.savefig(file_path)
-
         self.box_plot_path_saving_dict[str(start_year) + '-' + str(end_year)] = file_path
-        plt.show()
 
+        plt.savefig(file_path)
+        plt.show()
         return self.box_plot_path_saving_dict
 
     def generate_line_plot(self, specific_year: int, specific_month: int) -> dict:
@@ -99,9 +98,9 @@ class PlotOperations:
         output_dir = "images"
         mkdir_p(output_dir)
         file_path = '{0}/{1}'.format(output_dir, file_name)
-        plt.savefig(file_path)
 
         self.line_plot_path_saving_dict[str(specific_year) + '-' + str(specific_month)] = file_path
+        plt.savefig(file_path)
         plt.show()
 
         return self.line_plot_path_saving_dict
