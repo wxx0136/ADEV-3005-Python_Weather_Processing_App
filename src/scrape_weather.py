@@ -36,7 +36,7 @@ class WeatherScraper(HTMLParser):
         return self.data
 
     def start_scraping(self, url: str, year: int) -> None:
-        print('Scraping data of year:%d from %s' % (year, url))
+        print('Scraping data of year:{}'.format(year))
         for i in range(1, 13):
             self.get_weather_dict(year, i)
 

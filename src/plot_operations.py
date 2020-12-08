@@ -6,7 +6,7 @@ generate_line_plot is to draw line plot from a specific month from a chosen year
 """
 import matplotlib.pyplot as plt
 
-from common import is_number
+from common import is_number, mkdir_p
 from db_operations import DBOperations
 from scrape_weather import WeatherScraper
 
@@ -58,9 +58,14 @@ class PlotOperations:
         plt.xlabel('Month')
         plt.ylabel('Temperature (Celsius)')
         plt.title(plot_title)
-        save_path = str(start_year) + '_to_' + str(end_year) + '.png'
-        plt.savefig(save_path)
-        self.box_plot_path_saving_dict[str(start_year) + '-' + str(end_year)] = save_path
+        file_name = str(start_year) + '_to_' + str(end_year) + '.png'
+        # Create new directory
+        output_dir = "images"
+        mkdir_p(output_dir)
+        file_path = '{0}/{1}'.format(output_dir, file_name)
+        plt.savefig(file_path)
+
+        self.box_plot_path_saving_dict[str(start_year) + '-' + str(end_year)] = file_path
         plt.show()
 
         return self.box_plot_path_saving_dict
@@ -89,23 +94,28 @@ class PlotOperations:
         plot_title = 'Daily Temperature Distribution for: ' + month_string_list[specific_month - 1] + ' ' + str(
             specific_year)
         plt.title(plot_title)
-        save_path = str(specific_year) + '-' + str(specific_month) + '.png'
-        plt.savefig(save_path)
-        self.line_plot_path_saving_dict[str(specific_year) + '-' + str(specific_month)] = save_path
+        file_name = str(specific_year) + '-' + str(specific_month) + '.png'
+        # Create new directory
+        output_dir = "images"
+        mkdir_p(output_dir)
+        file_path = '{0}/{1}'.format(output_dir, file_name)
+        plt.savefig(file_path)
+
+        self.line_plot_path_saving_dict[str(specific_year) + '-' + str(specific_month)] = file_path
         plt.show()
 
         return self.line_plot_path_saving_dict
 
 
 if __name__ == '__main__':
-    # my_scraper = WeatherScraper()
-    # for year in range(2018, 2020 + 1):
-    #     my_scraper.start_scraping('', year)
-    #
-    # mydb = DBOperations('weather.sqlite')
-    # mydb.initialize_db()
-    # mydb.purge_data()
-    # mydb.save_data(my_scraper.weather)
+    my_scraper = WeatherScraper()
+    for year in range(2018, 2020 + 1):
+        my_scraper.start_scraping('', year)
+
+    mydb = DBOperations('weather.sqlite')
+    mydb.initialize_db()
+    mydb.purge_data()
+    mydb.save_data(my_scraper.weather)
 
     my_plot = PlotOperations()
     my_plot.generate_box_plot(2018, 2020)
