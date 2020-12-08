@@ -40,7 +40,7 @@ class PlotOperations:
 
         for item in years_data_list:
             if is_number(item[5]):
-                monthly_weather_data[int(item[1][5:7])] = float(item[5])
+                monthly_weather_data[int(item[1][5:7])].append(float(item[5]))
 
         # TODO: wait to cleaning before submit the project
         # for current_year in range(start_year, end_year + 1):
@@ -98,14 +98,14 @@ class PlotOperations:
 
 
 if __name__ == '__main__':
-    my_scraper = WeatherScraper()
-    for year in range(2018, 2020 + 1):
-        my_scraper.start_scraping('', year)
-
-    mydb = DBOperations('weather.sqlite')
-    mydb.initialize_db()
-    mydb.purge_data()
-    mydb.save_data(my_scraper.weather)
+    # my_scraper = WeatherScraper()
+    # for year in range(2018, 2020 + 1):
+    #     my_scraper.start_scraping('', year)
+    #
+    # mydb = DBOperations('weather.sqlite')
+    # mydb.initialize_db()
+    # mydb.purge_data()
+    # mydb.save_data(my_scraper.weather)
 
     my_plot = PlotOperations()
     my_plot.generate_box_plot(2018, 2020)
