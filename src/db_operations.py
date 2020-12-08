@@ -81,6 +81,13 @@ class DBOperations:
             fetch_weather = DBCM.fetchall()
         return fetch_weather
 
+    def fetch_last_one(self) -> tuple:
+        with DBOperations(self.db_name) as DBCM:
+            sql_fetch_last_one = f"""SELECT * FROM samples ORDER BY sample_date DESC LIMIT 1;"""
+            DBCM.execute(sql_fetch_last_one)
+            fetch_weather = DBCM.fetchall()
+        return fetch_weather
+
     def purge_data(self):
         with DBOperations(self.db_name) as DBCM:
             sql_purge_data_1 = """DELETE FROM samples;"""
@@ -90,22 +97,25 @@ class DBOperations:
 
 
 if __name__ == '__main__':
-    my_scraper = WeatherScraper()
+    # my_scraper = WeatherScraper()
     # my_scraper.start_scraping('', 2018)
-    my_scraper.start_scraping('', 2020)
+    # my_scraper.start_scraping('', 2020)
 
     mydb = DBOperations('weather.sqlite')
-    mydb.initialize_db()
-    mydb.purge_data()
+    # mydb.initialize_db()
+    # mydb.purge_data()
 
-    mydb.save_data(my_scraper.weather)
+    # mydb.save_data(my_scraper.weather)
     # for key, value in my_scraper.weather.items():
     #     print(key + ': ' + str(value))
 
-    print('years data')
-    for item in mydb.fetch_data(2020):
-        print(item)
+    # print('years data')
+    # for item in mydb.fetch_data(2020):
+    #     print(item)
 
-    print('month data')
-    for item in mydb.fetch_data(2020, 1):
-        print(item)
+    # print('month data')
+    # for item in mydb.fetch_data(2020, 1):
+    #     print(item)
+
+    print('the last one in the database')
+    print(mydb.fetch_last_one())
