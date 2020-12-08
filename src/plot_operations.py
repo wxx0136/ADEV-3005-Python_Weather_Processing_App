@@ -31,9 +31,9 @@ class PlotOperations:
         my_db = DBOperations('weather.sqlite')
         monthly_weather_data = {}  # format: [1:[Jan temps],2:[Feb temps],..,12:[Dec temps]]
 
-        for year in range(start_year, end_year + 1):
+        for current_year in range(start_year, end_year + 1):
             for month in range(1, 13):
-                monthly_list = my_db.fetch_data(year, month)
+                monthly_list = my_db.fetch_data(current_year, month)
                 if month not in monthly_weather_data:
                     monthly_weather_data[month] = []
                 for item in monthly_list:
@@ -46,35 +46,38 @@ class PlotOperations:
         plt.xlabel('Month')
         plt.ylabel('Temperature (Celsius)')
         plt.title(plot_title)
-        save_path = './images/boxplot-' + str(start_year) + '_to_' + str(end_year) + '.jpg'
+        save_path = str(start_year) + '_to_' + str(end_year) + '.png'
         plt.savefig(save_path)
         self.box_plot_path_saving_dict[str(start_year) + '-' + str(end_year)] = save_path
         plt.show()
 
         return self.box_plot_path_saving_dict
 
-    def generate_line_plot(self, specific_month: int, specific_year: int) -> dict:
+    def generate_line_plot(self, specific_year: int, specific_month: int) -> dict:
         """
         :param specific_month: the chosen month for line plotting
         :param specific_year: the chosen year for line plotting
         :return: returns the generated line plot images' saving paths class instance
         """
+        month_string_list = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         my_db = DBOperations('weather.sqlite')
         specific_month_data = []
         specific_timestamp = []
+
         monthly_list = my_db.fetch_data(specific_year, specific_month)
         for item in monthly_list:
             if is_number(item[5]):
                 specific_month_data.append(float(item[5]))
                 specific_timestamp.append(float(item[1][-2:]))
-        print(specific_year, '-', specific_month, ':', specific_month_data)
+        # print(specific_year, '-', specific_month, ':', specific_month_data)
 
         plt.plot(specific_timestamp, specific_month_data)
         plt.xlabel('Day')
         plt.ylabel('Temperature (Celsius)')
-        plot_title = 'Daily Temperature Distribution for:' + str(specific_year) + ' - ' + str(specific_month)
+        plot_title = 'Daily Temperature Distribution for: ' + month_string_list[specific_month - 1] + ' ' + str(
+            specific_year)
         plt.title(plot_title)
-        save_path = './images/' + str(specific_year) + '-' + str(specific_month) + '.jpg'
+        save_path = str(specific_year) + '-' + str(specific_month) + '.png'
         plt.savefig(save_path)
         self.line_plot_path_saving_dict[str(specific_year) + '-' + str(specific_month)] = save_path
         plt.show()
@@ -84,9 +87,8 @@ class PlotOperations:
 
 if __name__ == '__main__':
     my_scraper = WeatherScraper()
-    my_scraper.start_scraping('', 2018)
-    my_scraper.start_scraping('', 2019)
-    my_scraper.start_scraping('', 2020)
+    for year in range(2018, 2020 + 1):
+        my_scraper.start_scraping('', year)
 
     mydb = DBOperations('weather.sqlite')
     mydb.initialize_db()
@@ -94,5 +96,6 @@ if __name__ == '__main__':
     mydb.save_data(my_scraper.weather)
 
     my_plot = PlotOperations()
-    print(my_plot.generate_box_plot(2018, 2020))
-    print(my_plot.generate_line_plot(3, 2018))
+    my_plot.generate_box_plot(2018, 2020)
+    my_plot.generate_line_plot(2018, 5)
+    my_plot.generate_line_plot(2020, 12)
