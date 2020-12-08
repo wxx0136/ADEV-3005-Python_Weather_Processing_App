@@ -85,6 +85,8 @@ class WeatherProcessor:
         print(my_plot.generate_line_plot(nums[0], nums[1]))
         print('the mean temperature from ' + str(nums[0]) + 'to' + str(nums[1]) + 'has been plotted')
 
+    def check_data_latest_date(self):
+
 
 if __name__ == '__main__':
     my_weather_processor = WeatherProcessor()
