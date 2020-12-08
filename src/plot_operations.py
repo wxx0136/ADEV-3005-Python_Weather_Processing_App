@@ -38,34 +38,30 @@ class PlotOperations:
         my_db = DBOperations('weather.sqlite')
 
         years = range(start_year, end_year + 1)
-        years_weather_data = {}
+        monthly_weather_data = {}
 
         for year in years:
             months = range(1, 13)
             yearly_data = []
-            current_year = ''
             for month in months:
                 monthly_list = my_db.fetch_data(year, month)
-                monthly_mean_temp = []
+                if month not in monthly_weather_data:
+                    monthly_weather_data[month] = []
                 for item in monthly_list:
                     if is_number(item[5]):
-                        monthly_mean_temp.append(float(item[5]))
-                        current_year = item[1][:4]
-                yearly_data.append(monthly_mean_temp)
-            years_weather_data.update({current_year: yearly_data})
-        # format: {2019:[[Jan],2:[Feb],..,12:[Dec]], 2020: [[Jan],...12:[Dec]]}
+                        monthly_weather_data[month].append(float(item[5]))
+        # format: [1:[Jan temps],2:[Feb temps],..,12:[Dec temps]]
         plot_title = 'Monthly Temperature Distribution for:' + str(start_year) + ' to ' + str(end_year)
 
-        for key, value in years_weather_data.items():
-            print(key, value)
-            plt.boxplot(value, sym="o", whis=1.5)
-            plt.xlabel('Month')
-            plt.ylabel('Temperature (Celsius)')
-            plt.title(plot_title)
-            save_path = './images/' + str(key) + '.jpg'
-            plt.savefig(save_path)
-            self.box_plot_path_saving_dict[str(key)] = save_path
-            plt.show()
+        print(monthly_weather_data)
+        plt.boxplot(monthly_weather_data.values(), sym="o", whis=1.5)
+        plt.xlabel('Month')
+        plt.ylabel('Temperature (Celsius)')
+        plt.title(plot_title)
+        save_path = './images/boxplot-'+str(start_year)+'_to_'+str(end_year)+'.jpg'
+        plt.savefig(save_path)
+        self.box_plot_path_saving_dict[str(start_year) + '-' + str(end_year)] = save_path
+        plt.show()
 
         return self.box_plot_path_saving_dict
 
