@@ -29,16 +29,28 @@ class PlotOperations:
         """
 
         my_db = DBOperations('weather.sqlite')
-        monthly_weather_data = {}  # format: [1:[Jan temps],2:[Feb temps],..,12:[Dec temps]]
-
+        years_data_list = []
         for current_year in range(start_year, end_year + 1):
-            for month in range(1, 13):
-                monthly_list = my_db.fetch_data(current_year, month)
-                if month not in monthly_weather_data:
-                    monthly_weather_data[month] = []
-                for item in monthly_list:
-                    if is_number(item[5]):
-                        monthly_weather_data[month].append(float(item[5]))
+            years_data_list.extend(my_db.fetch_data(current_year))
+
+        monthly_weather_data = {}  # format: [1:[Jan temps],2:[Feb temps],..,12:[Dec temps]]
+        for month in range(1, 13):
+            if month not in monthly_weather_data:
+                monthly_weather_data[month] = []
+
+        for item in years_data_list:
+            if is_number(item[5]):
+                monthly_weather_data[int(item[1][5:7])] = float(item[5])
+
+        # TODO: wait to cleaning before submit the project
+        # for current_year in range(start_year, end_year + 1):
+        #     for month in range(1, 13):
+        #         monthly_list = my_db.fetch_data(current_year, month)
+        #         if month not in monthly_weather_data:
+        #             monthly_weather_data[month] = []
+        #         for item in monthly_list:
+        #             if is_number(item[5]):
+        #                 monthly_weather_data[month].append(float(item[5]))
 
         plot_title = 'Monthly Temperature Distribution for: ' + str(start_year) + ' to ' + str(end_year)
         # print(monthly_weather_data)
@@ -61,14 +73,14 @@ class PlotOperations:
         """
         month_string_list = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         my_db = DBOperations('weather.sqlite')
+        specific_timestamp = []  # 2020-12-01
         specific_month_data = []
-        specific_timestamp = []
 
-        monthly_list = my_db.fetch_data(specific_year, specific_month)
-        for item in monthly_list:
+        month_data = my_db.fetch_data(specific_year, specific_month)
+        for item in month_data:
             if is_number(item[5]):
-                specific_month_data.append(float(item[5]))
                 specific_timestamp.append(float(item[1][-2:]))
+                specific_month_data.append(float(item[5]))
         # print(specific_year, '-', specific_month, ':', specific_month_data)
 
         plt.plot(specific_timestamp, specific_month_data)
