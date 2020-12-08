@@ -51,6 +51,7 @@ class DBOperations:
         :param data_source:
         :return: none
         """
+        print('Database is updating...')
         new_list = []
         for k, v in data_source.items():
             new_row = [k]
@@ -66,6 +67,7 @@ class DBOperations:
             ?); """
             for list_item in new_list:
                 DBCM.execute(sql_save_data, list_item)
+        print('Database is updated.')
 
     def fetch_data(self, year: int, month: int = 0) -> list:
         if month == 0:
@@ -89,6 +91,7 @@ class DBOperations:
         return fetch_weather
 
     def purge_data(self):
+        print('Purging all the data from the database... ')
         with DBOperations(self.db_name) as DBCM:
             sql_purge_data_1 = """DELETE FROM samples;"""
             sql_purge_data_2 = """DELETE FROM sqlite_sequence WHERE name = 'samples';"""
