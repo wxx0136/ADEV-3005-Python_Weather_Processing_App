@@ -81,7 +81,7 @@ class DBOperations:
             fetch_weather = DBCM.fetchall()
         return fetch_weather
 
-    def fetch_last_one(self) -> tuple:
+    def fetch_last_one(self) -> list:
         with DBOperations(self.db_name) as DBCM:
             sql_fetch_last_one = f"""SELECT * FROM samples ORDER BY sample_date DESC LIMIT 1;"""
             DBCM.execute(sql_fetch_last_one)
