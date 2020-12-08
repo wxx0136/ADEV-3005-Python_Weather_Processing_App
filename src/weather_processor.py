@@ -17,7 +17,9 @@ class WeatherProcessor:
     """
 
     def __init__(self):
+        # user's database action choice: download full set or update
         self.database_choice = ''
+        # user's plotting choice: box plot a year range or just line-plot one specific month
         self.plot_choice = ''
 
     def download_or_update_database(self):
@@ -52,11 +54,20 @@ class WeatherProcessor:
 
         elif self.database_choice.lower() == 'u':
             my_scraper = WeatherScraper()
-            db_latest_date = ''  # 数据库里最新信息 怎么get????????
-            years = range(db_latest_date[:4], current_time[:4] + 1)
+            mydb = DBOperations('weather.sqlite')
+            db_latest_date = mydb.fetch_last_one()[0][1]
+            # db_latest_month = int(mydb.fetch_last_one()[0][1][5:7])
+            # db_latest_day = int(mydb.fetch_last_one()[0][1][-2:])
+            # current_date = int(current_time[:4])
+            # current_month = int(current_time[5:7])
+            # current_day = int(current_time[-2:])
+            if db_latest_date < current_time:  # compare 2 dates with ASCII value
+                print('the latest date in database is ', db_latest_date, 'starting to update...')
+
+            years = range(int(db_latest_date[:4]), int(current_time[:4]) + 1)
             for year in years:
                 my_scraper.start_scraping('', year)
-            mydb = DBOperations('weather.sqlite')
+
             mydb.initialize_db()
             mydb.purge_data()
             mydb.save_data(my_scraper.weather)
@@ -84,8 +95,6 @@ class WeatherProcessor:
         my_plot = PlotOperations()
         print(my_plot.generate_line_plot(nums[0], nums[1]))
         print('the mean temperature from ' + str(nums[0]) + 'to' + str(nums[1]) + 'has been plotted')
-
-    def check_data_latest_date(self):
 
 
 if __name__ == '__main__':
