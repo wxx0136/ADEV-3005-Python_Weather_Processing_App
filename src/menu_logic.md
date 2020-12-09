@@ -11,6 +11,10 @@ There are following year(s) weather data in the database:<br>
 Please input the number of the options[1,2,3]:__
 
 # Menu 0.1:
+>Are you sure you want to fetch all new data from the website?<br>
+>It will take several minutes [Y/N] : __
+
+# Menu 0.1.1:
 >Fetching all new data from the website. It will take several minutes...<br>
 Scraping data of year: 2020, month: 1...<br>
 Scraping data of year: 2020, month: 2...<br>
