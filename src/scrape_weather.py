@@ -99,8 +99,9 @@ class WeatherScraper(HTMLParser):
         daily_temps_list = []
         for item in result_grouping:
             if len(item) >= 3:
-                my_dict = {"Max": str(item[0]), "Min": str(item[1]), "Mean": str(item[2])}
-                daily_temps_list.append(my_dict)
+                if item[0] != '' and item[1] != '' and item[2] != '':
+                    my_dict = {"Max": str(item[0]), "Min": str(item[1]), "Mean": str(item[2])}
+                    daily_temps_list.append(my_dict)
 
         # print('debug: daily_temps_list')
         # for item in daily_temps_list:
