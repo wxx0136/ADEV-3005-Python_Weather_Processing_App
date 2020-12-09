@@ -66,6 +66,3 @@ class WeatherProcessor:
 if __name__ == '__main__':
     my_wp = WeatherProcessor()
     my_wp.exe_welcome()
-
-
-
