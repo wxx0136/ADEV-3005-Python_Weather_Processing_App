@@ -103,12 +103,12 @@ class DBOperations:
 if __name__ == '__main__':
     mydb = DBOperations('weather.sqlite')
     mydb.initialize_db()
-    mydb.purge_data()
 
     my_scraper = WeatherScraper()
     my_scraper.scrape_month_weather(2020, 12)
     my_scraper.scrape_now_to_earliest_month_weather(1998, 5)
 
+    mydb.purge_data()
     mydb.save_data(my_scraper.weather)
     for key, value in my_scraper.weather.items():
         print(key + ': ' + str(value))

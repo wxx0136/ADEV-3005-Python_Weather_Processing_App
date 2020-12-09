@@ -99,13 +99,13 @@ class PlotOperations:
 if __name__ == '__main__':
     mydb = DBOperations('weather.sqlite')
     mydb.initialize_db()
-    mydb.purge_data()
 
     my_scraper = WeatherScraper()
     my_scraper.scrape_now_to_earliest_month_weather(1998, 5)  # For testing, range is 1996-1997
     my_scraper.scrape_month_weather(2018, 5)
     my_scraper.scrape_month_weather(2020, 12)
 
+    mydb.purge_data()
     mydb.save_data(my_scraper.weather)
 
     my_plot = PlotOperations()
