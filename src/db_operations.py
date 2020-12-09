@@ -56,6 +56,7 @@ class DBOperations:
         for k, v in data_source.items():
             new_row = [k]
             for nest_key, nest_value in v.items():
+                # If it's 'M', insert a '' into database.
                 if is_number(nest_value):
                     new_row.append(nest_value)
                 else:
@@ -67,7 +68,7 @@ class DBOperations:
             ?); """
             for list_item in new_list:
                 DBCM.execute(sql_save_data, list_item)
-        print('Database is updated.')
+        print('Database updated.')
 
     def fetch_data(self, year: int, month: int = 0) -> list:
         if month == 0:
@@ -85,7 +86,7 @@ class DBOperations:
 
     def fetch_last_one(self) -> list:
         with DBOperations(self.db_name) as DBCM:
-            sql_fetch_last_one = f"""SELECT * FROM samples ORDER BY sample_date DESC LIMIT 1;"""
+            sql_fetch_last_one = """SELECT max(sample_date) FROM samples;"""
             DBCM.execute(sql_fetch_last_one)
             fetch_weather = DBCM.fetchall()
         return fetch_weather
@@ -100,25 +101,25 @@ class DBOperations:
 
 
 if __name__ == '__main__':
-    # my_scraper = WeatherScraper()
-    # my_scraper.start_scraping('', 2018)
-    # my_scraper.start_scraping('', 2020)
-
     mydb = DBOperations('weather.sqlite')
-    # mydb.initialize_db()
-    # mydb.purge_data()
+    mydb.initialize_db()
+    mydb.purge_data()
 
-    # mydb.save_data(my_scraper.weather)
-    # for key, value in my_scraper.weather.items():
-    #     print(key + ': ' + str(value))
+    my_scraper = WeatherScraper()
+    my_scraper.scrape_month_weather(2020, 12)
+    my_scraper.scrape_now_to_earliest_month_weather(1998, 5)
 
-    # print('years data')
-    # for item in mydb.fetch_data(2020):
-    #     print(item)
+    mydb.save_data(my_scraper.weather)
+    for key, value in my_scraper.weather.items():
+        print(key + ': ' + str(value))
 
-    # print('month data')
-    # for item in mydb.fetch_data(2020, 1):
-    #     print(item)
+    print('years data')
+    for item in mydb.fetch_data(1996):
+        print(item)
+
+    print('month data')
+    for item in mydb.fetch_data(2020, 12):
+        print(item)
 
     print('the last one in the database')
     print(mydb.fetch_last_one())

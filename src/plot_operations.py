@@ -42,16 +42,6 @@ class PlotOperations:
             if is_number(item[5]):
                 monthly_weather_data[int(item[1][5:7])].append(float(item[5]))
 
-        # TODO: wait to cleaning before submit the project
-        # for current_year in range(start_year, end_year + 1):
-        #     for month in range(1, 13):
-        #         monthly_list = my_db.fetch_data(current_year, month)
-        #         if month not in monthly_weather_data:
-        #             monthly_weather_data[month] = []
-        #         for item in monthly_list:
-        #             if is_number(item[5]):
-        #                 monthly_weather_data[month].append(float(item[5]))
-
         plot_title = 'Monthly Temperature Distribution for: ' + str(start_year) + ' to ' + str(end_year)
         # print(monthly_weather_data)
         plt.boxplot(monthly_weather_data.values(), sym="o", whis=1.5)
@@ -107,16 +97,18 @@ class PlotOperations:
 
 
 if __name__ == '__main__':
-    my_scraper = WeatherScraper()
-    for year in range(2018, 2020 + 1):
-        my_scraper.start_scraping('', year)
-
     mydb = DBOperations('weather.sqlite')
     mydb.initialize_db()
     mydb.purge_data()
+
+    my_scraper = WeatherScraper()
+    my_scraper.scrape_now_to_earliest_month_weather(1998, 5)  # For testing, range is 1996-1997
+    my_scraper.scrape_month_weather(2018, 5)
+    my_scraper.scrape_month_weather(2020, 12)
+
     mydb.save_data(my_scraper.weather)
 
     my_plot = PlotOperations()
-    my_plot.generate_box_plot(2018, 2020)
+    my_plot.generate_box_plot(1996, 1997)
     my_plot.generate_line_plot(2018, 5)
     my_plot.generate_line_plot(2020, 12)

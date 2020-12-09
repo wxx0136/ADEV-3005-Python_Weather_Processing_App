@@ -1,7 +1,7 @@
 import calendar
 import urllib.request
 from html.parser import HTMLParser
-from datetime import date
+from datetime import date, datetime
 
 
 class WeatherScraper(HTMLParser):
@@ -10,22 +10,27 @@ class WeatherScraper(HTMLParser):
         self.weather = {}
         self.data = ''
         self.reading_temp_flag = False
+        self.date_list = []
+        self.stop_scraping = False
 
     def error(self, message):
         print("<Error>:", message)
 
     def handle_starttag(self, tag, attrs):
+        if tag == 'abbr':
+            if attrs[0][1]:  # <abbr title="May 1, 2018">
+                try:
+                    current_date = attrs[0][1]
+                    self.date_list.append(datetime.strptime(current_date, '%B %d, %Y').strftime('%Y-%m-%d'))
+                except ValueError:
+                    return None
+
         if tag == 'td':
             self.reading_temp_flag = True
 
     def handle_data(self, data: str):
         if self.reading_temp_flag:
             if data not in ['LegendM', 'LegendE', ' ', 'LegendT', 'LegendCarer', 'E']:
-                # if data == 'E':
-                #     self.data = self.data[:-1]
-                # if data == 'M':
-                #     self.data += '' + ','
-                # else:
                 self.data += data.strip() + ','
 
     def handle_endtag(self, tag):
@@ -37,9 +42,18 @@ class WeatherScraper(HTMLParser):
 
     def start_scraping(self, url: str, year: int) -> None:
         for i in range(1, 13):
-            self.get_weather_dict(year, i)
+            self.scrape_month_weather(year, i)
 
-    def get_weather_dict(self, year: int, month: int) -> dict:
+    def scrape_now_to_earliest_month_weather(self, year: int = datetime.today().year,
+                                             month: int = datetime.today().month) -> None:
+        while not self.stop_scraping:
+            self.scrape_month_weather(year, month)
+            month -= 1
+            if month == 0:
+                year -= 1
+                month = 12
+
+    def scrape_month_weather(self, year: int, month: int) -> dict:
         print('Scraping data of year: {0}, month: {1}...'.format(year, month))
         days_of_current_month = calendar.monthrange(year, month)[1]
         # Get raw info from HTML parse
@@ -56,6 +70,12 @@ class WeatherScraper(HTMLParser):
             html = str(response.read())
         new_scraper.feed(html)
 
+        # If the date_list in the website already be scraped, then we will stop the scrapper.
+        if new_scraper.date_list != [] and new_scraper.date_list in self.date_list:
+            self.stop_scraping = True
+            print('There is no data for year: {0}, month: {1}.'.format(year, month))
+            return {}
+
         result = new_scraper.get_data().split(',')
 
         # print('debug: result')
@@ -69,16 +89,13 @@ class WeatherScraper(HTMLParser):
         # print()
 
         # Convert raw info to weather list.
-        # From the website, each row has 11 column, and the last 4 lines are useless(sum, avg, xtrm, summary)
+        # From the website, each row has 11 column, and the last 4 lines are useless(sum, avg, xtrm, summary).
         columns = 11
-
-        # print(datetime.date.today().day)
         if date.today().year == year and date.today().month == month:
             rows = date.today().day
         else:
             rows = days_of_current_month
-        result_grouping = [result[i:i + columns] for i in
-                           range(0, rows * columns, columns)]
+        result_grouping = [result[i:i + columns] for i in range(0, rows * columns, columns)]
         daily_temps_list = []
         for item in result_grouping:
             if len(item) >= 3:
@@ -90,19 +107,9 @@ class WeatherScraper(HTMLParser):
         #     print(str(item))
 
         # Zip weather list items with the date
-        day = 1
-        month_dict = {}
-        for item in daily_temps_list:
-            # Get the days of that month
-            if day <= days_of_current_month:
-                str_day = ('0' + str(day)) if day < 10 else str(day)
-                str_month = ('0' + str(month)) if month < 10 else str(month)
-                data_key = str(year) + '-' + str_month + '-' + str_day
-                # exclude today's or yesterday's blank data
-                if item['Max'] != '' and item['Min'] != '' and item['Mean'] != '':
-                    month_dict[data_key] = item
-                    self.weather[data_key] = item
-            day += 1
+        month_dict = dict(zip(new_scraper.date_list, daily_temps_list))
+        self.date_list.append(new_scraper.date_list)
+        self.weather.update(month_dict)
 
         # print('debug: month_dict')
         # for key, value in month_dict.items():
@@ -113,6 +120,8 @@ class WeatherScraper(HTMLParser):
 
 if __name__ == '__main__':
     my_scraper = WeatherScraper()
-    my_scraper.get_weather_dict(2020, 12)
+    my_scraper.scrape_now_to_earliest_month_weather()
+    my_scraper.start_scraping('url string', 2020)
+    print('debug: my_scraper.weather')
     for key, value in my_scraper.weather.items():
         print(key + ': ' + str(value))
