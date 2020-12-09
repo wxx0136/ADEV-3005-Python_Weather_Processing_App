@@ -42,6 +42,7 @@ Database is updated.<br>
 2.Generate a LINE PLOT for an assigned month.<br>
 3.Return to main menu.<br>
 4.Exit<br>
+> Please input the number of the options[1,2,3,4]:__
 
 # Menu 0.3.1
 >You are trying to generate a BOX PLOT between a year range:<br>
