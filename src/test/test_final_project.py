@@ -4,8 +4,8 @@ from scrape_weather import WeatherScraper
 
 
 from db_operations import DBOperations
-# from plot_operations import PlotOperations
-# from weather_processor import WeatherProcessor
+from plot_operations import PlotOperations
+from weather_processor import WeatherProcessor
 
 
 class TestScraping(unittest.TestCase):
@@ -47,20 +47,20 @@ class TestDatabase(unittest.TestCase):
         self.assertIsNotNone(cur.execute(sql_select))
 
 
-# class TestPlot(unittest.TestCase):
-#     def setUp(self):
-#         self.myplot = PlotOperations()
-#
-#     def test_plot_type(self):
-#         self.assertIsInstance(self.myplot, PlotOperations)
-#
-#
-# class TestWeatherProcessor(unittest.TestCase):
-#     def setUp(self):
-#         self.myweatherprocessor = WeatherProcessor()
-#
-#     def test_weather_processor_type(self):
-#         self.assertIsInstance(self.myweatherprocessor, WeatherProcessor)
+class TestPlot(unittest.TestCase):
+    def setUp(self):
+        self.myplot = PlotOperations()
+
+    def test_plot_type(self):
+        self.assertIsInstance(self.myplot, PlotOperations)
+
+
+class TestWeatherProcessor(unittest.TestCase):
+    def setUp(self):
+        self.myweatherprocessor = WeatherProcessor()
+
+    def test_weather_processor_type(self):
+        self.assertIsInstance(self.myweatherprocessor, WeatherProcessor)
 
 
 if __name__ == "__main__":
