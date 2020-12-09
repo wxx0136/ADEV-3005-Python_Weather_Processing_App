@@ -30,7 +30,8 @@ class WeatherProcessor:
         self.database_choice = input('please input: "D" or "d" to download full DB, or input  '
                                      '"U"or "u" to update DB:  ')
         while not (
-                self.database_choice.lower() == 'd' or self.database_choice.lower() == 'u' or self.database_choice.lower() == 'b' or self.database_choice.lower() == 'l'):
+                self.database_choice.lower() == 'd' or self.database_choice.lower() == 'u'
+                or self.database_choice.lower() == 'b' or self.database_choice.lower() == 'l'):
             self.database_choice = input('please input. "d" or "D" to download DB, "u"or "U" to update DB: ')
 
         iso_time_format = '%Y-%m-%d'
@@ -79,7 +80,8 @@ class WeatherProcessor:
                     mydb.initialize_db()
                     mydb.purge_data()
                     mydb.save_data(my_scraper.weather)
-                elif db_latest_year == current_year and db_latest_month == current_month and db_latest_day < current_day:
+                elif db_latest_year == current_year \
+                        and db_latest_month == current_month and db_latest_day < current_day:
                     my_scraper.start_scraping('', current_year)
                     mydb.initialize_db()
                     mydb.purge_data()
