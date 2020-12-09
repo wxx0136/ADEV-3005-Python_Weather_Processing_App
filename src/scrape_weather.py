@@ -120,7 +120,7 @@ class WeatherScraper(HTMLParser):
 
 if __name__ == '__main__':
     my_scraper = WeatherScraper()
-    my_scraper.scrape_now_to_earliest_month_weather()
+    my_scraper.scrape_now_to_earliest_month_weather(1998, 5)
     my_scraper.start_scraping('url string', 2020)
     print('debug: my_scraper.weather')
     for key, value in my_scraper.weather.items():
