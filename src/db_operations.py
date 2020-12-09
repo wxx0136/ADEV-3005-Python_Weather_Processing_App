@@ -84,6 +84,13 @@ class DBOperations:
             fetch_weather = DBCM.fetchall()
         return fetch_weather
 
+    def fetch_earliest_one(self) -> list:
+        with DBOperations(self.db_name) as DBCM:
+            sql_fetch_last_one = """SELECT min(sample_date) FROM samples;"""
+            DBCM.execute(sql_fetch_last_one)
+            fetch_weather = DBCM.fetchall()
+        return fetch_weather
+
     def fetch_last_one(self) -> list:
         with DBOperations(self.db_name) as DBCM:
             sql_fetch_last_one = """SELECT max(sample_date) FROM samples;"""
