@@ -27,6 +27,7 @@ class PlotOperations:
         :param start_year: ending year for line plotting
         :return: returns the generated box plot images' saving paths class instance
         """
+        print('Generate a BOX PLOT between years[{0}-{1}]...'.format(start_year, end_year))
 
         my_db = DBOperations('weather.sqlite')
         years_data_list = []
@@ -65,6 +66,7 @@ class PlotOperations:
         :param specific_year: the chosen year for line plotting
         :return: returns the generated line plot images' saving paths class instance
         """
+        print('Generate a Line PLOT for [{0}-{1}]...'.format(specific_year, specific_month))
         month_string_list = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         my_db = DBOperations('weather.sqlite')
         specific_timestamp = []  # 2020-12-01
@@ -99,13 +101,13 @@ class PlotOperations:
 if __name__ == '__main__':
     mydb = DBOperations('weather.sqlite')
     mydb.initialize_db()
-    mydb.purge_data()
 
     my_scraper = WeatherScraper()
     my_scraper.scrape_now_to_earliest_month_weather(1998, 5)  # For testing, range is 1996-1997
     my_scraper.scrape_month_weather(2018, 5)
     my_scraper.scrape_month_weather(2020, 12)
 
+    mydb.purge_data()
     mydb.save_data(my_scraper.weather)
 
     my_plot = PlotOperations()
