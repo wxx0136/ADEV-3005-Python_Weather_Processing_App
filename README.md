@@ -15,6 +15,7 @@ This is the final project for ADEV-3005-Python course.
     - error handling [DONE]
         - log files [DONE]
     - pass unittest [DONE]
-* Part 7 - Bonus - 10% [AVOID]
-    - UI: wxPython
+* Part 7 - Bonus - 15% [AVOID]
+    - UI: wxPython 10%
+    - Multi Thread 5%
 
