@@ -1,10 +1,21 @@
+"""
+There is one class in this module.
+
+Class WeatherScraper  use the Python HTMLParser class to scrape Winnipeg weather data (min,
+max & mean temperatures) from the Environment Canada website,
+"""
 import calendar
 import urllib.request
+
 from html.parser import HTMLParser
 from datetime import date, datetime
 
 
 class WeatherScraper(HTMLParser):
+    """
+    WeatherScraper scrapes the weather data, filter and package them for database input later.
+    """
+
     def __init__(self):
         HTMLParser.__init__(self)
         self.weather = {}
@@ -14,9 +25,20 @@ class WeatherScraper(HTMLParser):
         self.stop_scraping = False
 
     def error(self, message):
+        """
+        Print the error message when meet them.
+        :param message:
+        :return:
+        """
         print("<Error>:", message)
 
     def handle_starttag(self, tag, attrs):
+        """
+        Condition for starting tag scarping.
+        :param tag:
+        :param attrs:
+        :return:
+        """
         if tag == 'abbr':
             if attrs[0][1]:  # <abbr title="May 1, 2018">
                 try:
@@ -29,23 +51,50 @@ class WeatherScraper(HTMLParser):
             self.reading_temp_flag = True
 
     def handle_data(self, data: str):
+        """
+        Condition for scraping the useful data.
+        :param data:
+        :return:
+        """
         if self.reading_temp_flag:
             if data not in ['LegendM', 'LegendE', ' ', 'LegendT', 'LegendCarer', 'E']:
                 self.data += data.strip() + ','
 
     def handle_endtag(self, tag):
+        """
+        Condition for ending tag scarping.
+        :param tag:
+        :return:
+        """
         if tag == 'td':
             self.reading_temp_flag = False
 
     def get_data(self):
+        """
+        Return the data which was scraped.
+        :return:
+        """
         return self.data
 
     def start_scraping(self, url: str, year: int) -> None:
+        """
+        Scraping a specific year temperature data.
+        :param url:
+        :param year:
+        :return:
+        """
+        print('Start scraping from website: ' + url)
         for i in range(1, 13):
             self.scrape_month_weather(year, i)
 
     def scrape_now_to_earliest_month_weather(self, year: int = datetime.today().year,
                                              month: int = datetime.today().month) -> None:
+        """
+        Automatically detect when no more weather data is available for scraping.
+        :param year:
+        :param month:
+        :return:
+        """
         while not self.stop_scraping:
             self.scrape_month_weather(year, month)
             month -= 1
@@ -54,6 +103,12 @@ class WeatherScraper(HTMLParser):
                 month = 12
 
     def scrape_month_weather(self, year: int, month: int) -> dict:
+        """
+        Scraping a month temperature data on the website page.
+        :param year:
+        :param month:
+        :return:
+        """
         print('Scraping data of year: {0}, month: {1}...'.format(year, month))
         days_of_current_month = calendar.monthrange(year, month)[1]
         # Get raw info from HTML parse

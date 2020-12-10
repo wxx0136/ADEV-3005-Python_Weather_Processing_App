@@ -1,3 +1,8 @@
+"""
+There is one class in this module.
+
+Class WeatherProcessor presents the user with a menu of choices when the program starts.
+"""
 import sys
 
 from db_operations import DBOperations
@@ -11,11 +16,15 @@ class WeatherProcessor:
     def __init__(self):
         self.my_db = DBOperations('weather.sqlite')
         self.my_db.initialize_db()
-        self.cut_off = '**************************************'
+        self.cut_off = '****************************************************************************'
         self.invalid_input_str = 'Sorry, your input is not validated, please try again.'
 
     def exe_welcome(self):
-        print(self.cut_off + 'Welcome Menu' + self.cut_off)
+        """
+        Welcome menu.
+        :return:
+        """
+        print(self.cut_off)
         print('Welcome to Weather Scraper App!')
         print('There are weather data between [{0}] and [{1}] in the database.'.format(
             self.my_db.fetch_earliest_one()[0][0], self.my_db.fetch_last_one()[0][0]))
@@ -23,7 +32,11 @@ class WeatherProcessor:
         self.exe_menu_0()
 
     def exe_menu_0(self):
-        print(self.cut_off + 'Main Menu' + self.cut_off)
+        """
+        Main menu.
+        :return:
+        """
+        print(self.cut_off)
         print('What do you want to do?')
         menu = {
             '1': 'Fetch all new data from the website.',
@@ -50,6 +63,10 @@ class WeatherProcessor:
                 print(self.invalid_input_str)
 
     def exe_menu_0_1(self):
+        """
+        Fetch all new data menu:
+        :return:
+        """
         print(self.cut_off)
         print('Are you sure you want to fetch all new data from the website?')
 
@@ -65,11 +82,19 @@ class WeatherProcessor:
                 print(self.invalid_input_str)
 
     def exe_menu_0_1_1(self):
+        """
+        Processing of fetching all new data.
+        :return:
+        """
         print(self.cut_off)
         print('Fetching all new data from the website. It will take several minutes...')
         self.renew_all_data()
 
     def exe_menu_0_2(self):
+        """
+        Fetch the gap data menu.
+        :return:
+        """
         print(self.cut_off)
         print('The last day in the database is: [{0}]'.format(self.my_db.fetch_last_one()[0][0]))
         print('Today is: [{0}]'.format(date.today()))
@@ -78,7 +103,11 @@ class WeatherProcessor:
         self.exe_menu_0()
 
     def exe_menu_0_3(self):
-        print(self.cut_off + 'Plot Menu' + self.cut_off)
+        """
+        Plot menu.
+        :return:
+        """
+        print(self.cut_off)
         print('What the kind of plots you want?')
 
         menu = {
@@ -106,7 +135,11 @@ class WeatherProcessor:
                 print(self.invalid_input_str)
 
     def exe_menu_0_3_1(self):
-        print(self.cut_off + 'Box Plot Menu' + self.cut_off)
+        """
+        Box plot menu.
+        :return:
+        """
+        print(self.cut_off)
         print('You are trying to generate a BOX PLOT between a year range:')
         start_year_input_flag = True
         end_year_input_flag = True
@@ -140,7 +173,11 @@ class WeatherProcessor:
         self.exe_menu_0_3()
 
     def exe_menu_0_3_2(self):
-        print(self.cut_off + 'Line Plot Menu' + self.cut_off)
+        """
+        Line plot menu.
+        :return:
+        """
+        print(self.cut_off)
         print('You are trying to generate a LINE PLOT for a specific month:')
         year_input_flag = True
         month_input_flag = True
@@ -171,12 +208,20 @@ class WeatherProcessor:
         self.exe_menu_0_3()
 
     def renew_all_data(self):
+        """
+        Fetch all new data from website and cover the database.
+        :return:
+        """
         my_scraper = WeatherScraper()
         my_scraper.scrape_now_to_earliest_month_weather()
         self.my_db.purge_data()
         self.my_db.save_data(my_scraper.weather)
 
     def fill_missing_data(self):
+        """
+        Fetch the gap data from now to the last one in the database and just insert these data.
+        :return:
+        """
         last_one_date = self.my_db.fetch_last_one()[0][0]
         last_one_year = int(last_one_date[:4])
         last_one_month = int(last_one_date[5:7])
@@ -197,6 +242,12 @@ class WeatherProcessor:
         self.my_db.save_data(my_scraper.weather)
 
     def generate_box_plot(self, start_year: int, end_year: int) -> None:
+        """
+        Generate a box plot for a year range.
+        :param start_year:
+        :param end_year:
+        :return:
+        """
         start_year_data = self.my_db.fetch_data(start_year)
         end_year_data = self.my_db.fetch_data(end_year)
         if not start_year_data:
@@ -208,6 +259,12 @@ class WeatherProcessor:
             my_plot.generate_box_plot(start_year, end_year)
 
     def generate_line_plot(self, specific_year: int, specific_month: int) -> None:
+        """
+        Generate a line plot for a month.
+        :param specific_year:
+        :param specific_month:
+        :return:
+        """
         month_data = self.my_db.fetch_data(specific_year, specific_month)
         if not month_data:
             print('Warning: there is no data of [{0}-{1}] in the database. Please update first.'.format(specific_year,

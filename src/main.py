@@ -1,7 +1,11 @@
-from weather_processor_cli import WeatherProcessor
+from weather_processor import WeatherProcessor
 
 
 def main():
+    """
+    The entrance of this App.
+    :return:
+    """
     my_wp = WeatherProcessor()
     my_wp.exe_welcome()
 

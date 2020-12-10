@@ -1,41 +1,51 @@
 """
-    There is one classes in this module.
+There is one classes in this module.
 
-    Class DBOperations is an sqlite database operation.
-        __init__: build a new database connection
-        connection_closed: close this database connection
-        table_init: create a new table in the database
-        insert_dictionary: insert an assigned dictionary to the table
-        print_all: print out the data currently in the database
+Class DBOperations is an sqlite database operation.
 """
-
 import sqlite3
-from common import is_number
 
+from common import is_number
 from scrape_weather import WeatherScraper
 
 
 class DBOperations:
-    """ create this database context manager """
+    """
+    Use the Python sqlite3 module to store the weather data in an SQLite database in the specified format.
+    """
 
     def __init__(self, path: str):
-        """ build a new database connection """
+        """
+        Build a new database connection.
+        """
         self.db_name = path
         self.conn = sqlite3.connect(self.db_name)
         self.cursor = self.conn.cursor()
 
     def __enter__(self):
+        """
+        Create a database context manager.
+        :return:
+        """
         return self.cursor
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        """ close this database connection """
+        """
+        Close the database connection.
+        :param exc_type:
+        :param exc_val:
+        :param exc_tb:
+        :return:
+        """
         self.conn.commit()
         self.cursor.close()
         self.conn.close()
 
     def initialize_db(self):
-        """ create a 'samples' table in the database """
-        # self.cursor.execute("drop table %s;" % name)
+        """
+        Create a table if it not exists.
+        :return:
+        """
         with DBOperations(self.db_name) as DBCM:
             sql_initialize_db = """create table if not exists samples (id integer primary key autoincrement not null,
                                         sample_date text not null UNIQUE,
@@ -47,7 +57,7 @@ class DBOperations:
 
     def save_data(self, data_source: dict):
         """
-        receive a dictionary of dictionaries and correctly insert the data into the DB
+        Save new data to the DB, if it doesn't already exist (i.e. No duplicate data)
         :param data_source:
         :return: none
         """
@@ -71,6 +81,12 @@ class DBOperations:
         print('Database updated.')
 
     def fetch_data(self, year: int, month: int = 0) -> list:
+        """
+        Fetch the requested data for plotting.
+        :param year:
+        :param month:
+        :return:
+        """
         if month == 0:
             month_str = ''
         elif month < 10:
@@ -85,6 +101,10 @@ class DBOperations:
         return fetch_weather
 
     def fetch_earliest_one(self) -> list:
+        """
+        Fetch the earliest date in the database.
+        :return:
+        """
         with DBOperations(self.db_name) as DBCM:
             sql_fetch_last_one = """SELECT min(sample_date) FROM samples;"""
             DBCM.execute(sql_fetch_last_one)
@@ -92,6 +112,10 @@ class DBOperations:
         return fetch_weather
 
     def fetch_last_one(self) -> list:
+        """
+        Fetch the latest data in the database.
+        :return:
+        """
         with DBOperations(self.db_name) as DBCM:
             sql_fetch_last_one = """SELECT max(sample_date) FROM samples;"""
             DBCM.execute(sql_fetch_last_one)
@@ -99,6 +123,10 @@ class DBOperations:
         return fetch_weather
 
     def purge_data(self):
+        """
+        Delete all the data from the DB for when the program fetches all new weather data.
+        :return:
+        """
         print('Purging all the data from the database... ')
         with DBOperations(self.db_name) as DBCM:
             sql_purge_data_1 = """DELETE FROM samples;"""

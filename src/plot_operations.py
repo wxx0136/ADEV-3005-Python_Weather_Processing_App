@@ -1,8 +1,7 @@
 """
-this module plots the weather  data fetched from database
-include methods:
-generate_box_plot is to draw box plot from year to year
-generate_line_plot is to draw line plot from a specific month from a chosen year
+There is one class in the module.
+
+Class PlotOperations plots the weather data fetched from database.
 """
 import matplotlib.pyplot as plt
 
@@ -13,8 +12,8 @@ from scrape_weather import WeatherScraper
 
 class PlotOperations:
     """
-    this class is to box plot and line plot
-    weather mean temperatures of year to year or specific month respectively
+    This class will create the box plot and line plot by the mean temperatures between year range or specific month
+    respectively.
     """
 
     def __init__(self):
@@ -23,6 +22,7 @@ class PlotOperations:
 
     def generate_box_plot(self, start_year: int, end_year: int) -> dict:
         """
+        Generate a box plot by years data.
         :param end_year: starting year for box plotting
         :param start_year: ending year for line plotting
         :return: returns the generated box plot images' saving paths class instance
@@ -44,12 +44,12 @@ class PlotOperations:
                 monthly_weather_data[int(item[1][5:7])].append(float(item[5]))
 
         plot_title = 'Monthly Temperature Distribution for: ' + str(start_year) + ' to ' + str(end_year)
-        # print(monthly_weather_data)
         plt.boxplot(monthly_weather_data.values(), sym="o", whis=1.5)
         plt.xlabel('Month')
         plt.ylabel('Temperature (Celsius)')
         plt.title(plot_title)
         file_name = str(start_year) + '_to_' + str(end_year) + '.png'
+
         # Create new directory
         output_dir = "images"
         mkdir_p(output_dir)
@@ -62,6 +62,7 @@ class PlotOperations:
 
     def generate_line_plot(self, specific_year: int, specific_month: int) -> dict:
         """
+        Generate a line plot by month data.
         :param specific_month: the chosen month for line plotting
         :param specific_year: the chosen year for line plotting
         :return: returns the generated line plot images' saving paths class instance
@@ -77,7 +78,6 @@ class PlotOperations:
             if is_number(item[5]):
                 specific_timestamp.append(float(item[1][-2:]))
                 specific_month_data.append(float(item[5]))
-        # print(specific_year, '-', specific_month, ':', specific_month_data)
 
         plt.plot(specific_timestamp, specific_month_data)
         plt.xlabel('Day')
@@ -86,6 +86,7 @@ class PlotOperations:
             specific_year)
         plt.title(plot_title)
         file_name = str(specific_year) + '-' + str(specific_month) + '.png'
+
         # Create new directory
         output_dir = "images"
         mkdir_p(output_dir)
