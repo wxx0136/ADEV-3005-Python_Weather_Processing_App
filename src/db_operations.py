@@ -4,6 +4,7 @@ There is one classes in this module.
 Class DBOperations is an sqlite database operation.
 """
 import sqlite3
+import logging
 
 from common import is_number
 from scrape_weather import WeatherScraper
@@ -21,6 +22,7 @@ class DBOperations:
         self.db_name = path
         self.conn = sqlite3.connect(self.db_name)
         self.cursor = self.conn.cursor()
+        self.logger = logging.getLogger()
 
     def __enter__(self):
         """
@@ -46,14 +48,17 @@ class DBOperations:
         Create a table if it not exists.
         :return:
         """
-        with DBOperations(self.db_name) as DBCM:
-            sql_initialize_db = """create table if not exists samples (id integer primary key autoincrement not null,
-                                        sample_date text not null UNIQUE,
-                                        location text not null default %s,
-                                        min_temp real not null,
-                                        max_temp real not null,
-                                        avg_temp real not null); """ % "'StationID=27174'"
-            DBCM.execute(sql_initialize_db)
+        try:
+            with DBOperations(self.db_name) as DBCM:
+                sql_initialize_db = """create table if not exists samples (id integer primary key autoincrement not null,
+                                            sample_date text not null UNIQUE,
+                                            location text not null default %s,
+                                            min_temp real not null,
+                                            max_temp real not null,
+                                            avg_temp real not null); """ % "'StationID=27174'"
+                DBCM.execute(sql_initialize_db)
+        except Exception as e:
+            self.logger.error(e)
 
     def save_data(self, data_source: dict):
         """
@@ -61,24 +66,27 @@ class DBOperations:
         :param data_source:
         :return: none
         """
-        print('Database is updating...')
-        new_list = []
-        for k, v in data_source.items():
-            new_row = [k]
-            for nest_key, nest_value in v.items():
-                # If it's 'M', insert a '' into database.
-                if is_number(nest_value):
-                    new_row.append(nest_value)
-                else:
-                    new_row.append('')
-            new_list.append(tuple(new_row))
+        try:
+            print('Database is updating...')
+            new_list = []
+            for k, v in data_source.items():
+                new_row = [k]
+                for nest_key, nest_value in v.items():
+                    # If it's 'M', insert a '' into database.
+                    if is_number(nest_value):
+                        new_row.append(nest_value)
+                    else:
+                        new_row.append('')
+                new_list.append(tuple(new_row))
 
-        with DBOperations(self.db_name) as DBCM:
-            sql_save_data = """INSERT OR IGNORE INTO samples (sample_date,max_temp,min_temp,avg_temp) VALUES (?,?,?,
-            ?); """
-            for list_item in new_list:
-                DBCM.execute(sql_save_data, list_item)
-        print('Database updated.')
+            with DBOperations(self.db_name) as DBCM:
+                sql_save_data = """INSERT OR IGNORE INTO samples (sample_date,max_temp,min_temp,avg_temp) VALUES (?,?,?,
+                ?); """
+                for list_item in new_list:
+                    DBCM.execute(sql_save_data, list_item)
+            print('Database updated.')
+        except Exception as e:
+            self.logger.error(e)
 
     def fetch_data(self, year: int, month: int = 0) -> list:
         """
@@ -87,52 +95,64 @@ class DBOperations:
         :param month:
         :return:
         """
-        if month == 0:
-            month_str = ''
-        elif month < 10:
-            month_str = '0' + str(month)
-        else:
-            month_str = str(month)
+        try:
+            if month == 0:
+                month_str = ''
+            elif month < 10:
+                month_str = '0' + str(month)
+            else:
+                month_str = str(month)
 
-        with DBOperations(self.db_name) as DBCM:
-            sql_fetch_year_date = f"""SELECT * FROM samples WHERE sample_date LIKE '{year}-{month_str}%';"""
-            DBCM.execute(sql_fetch_year_date)
-            fetch_weather = DBCM.fetchall()
-        return fetch_weather
+            with DBOperations(self.db_name) as DBCM:
+                sql_fetch_year_date = f"""SELECT * FROM samples WHERE sample_date LIKE '{year}-{month_str}%';"""
+                DBCM.execute(sql_fetch_year_date)
+                fetch_weather = DBCM.fetchall()
+            return fetch_weather
+        except Exception as e:
+            self.logger.error(e)
 
     def fetch_earliest_one(self) -> list:
         """
         Fetch the earliest date in the database.
         :return:
         """
-        with DBOperations(self.db_name) as DBCM:
-            sql_fetch_last_one = """SELECT min(sample_date) FROM samples;"""
-            DBCM.execute(sql_fetch_last_one)
-            fetch_weather = DBCM.fetchall()
-        return fetch_weather
+        try:
+            with DBOperations(self.db_name) as DBCM:
+                sql_fetch_last_one = """SELECT min(sample_date) FROM samples;"""
+                DBCM.execute(sql_fetch_last_one)
+                fetch_weather = DBCM.fetchall()
+            return fetch_weather
+        except Exception as e:
+            self.logger.error(e)
 
     def fetch_last_one(self) -> list:
         """
         Fetch the latest data in the database.
         :return:
         """
-        with DBOperations(self.db_name) as DBCM:
-            sql_fetch_last_one = """SELECT max(sample_date) FROM samples;"""
-            DBCM.execute(sql_fetch_last_one)
-            fetch_weather = DBCM.fetchall()
-        return fetch_weather
+        try:
+            with DBOperations(self.db_name) as DBCM:
+                sql_fetch_last_one = """SELECT max(sample_date) FROM samples;"""
+                DBCM.execute(sql_fetch_last_one)
+                fetch_weather = DBCM.fetchall()
+            return fetch_weather
+        except Exception as e:
+            self.logger.error(e)
 
     def purge_data(self):
         """
         Delete all the data from the DB for when the program fetches all new weather data.
         :return:
         """
-        print('Purging all the data from the database... ')
-        with DBOperations(self.db_name) as DBCM:
-            sql_purge_data_1 = """DELETE FROM samples;"""
-            sql_purge_data_2 = """DELETE FROM sqlite_sequence WHERE name = 'samples';"""
-            DBCM.execute(sql_purge_data_1)
-            DBCM.execute(sql_purge_data_2)
+        try:
+            print('Purging all the data from the database... ')
+            with DBOperations(self.db_name) as DBCM:
+                sql_purge_data_1 = """DELETE FROM samples;"""
+                sql_purge_data_2 = """DELETE FROM sqlite_sequence WHERE name = 'samples';"""
+                DBCM.execute(sql_purge_data_1)
+                DBCM.execute(sql_purge_data_2)
+        except Exception as e:
+            self.logger.error(e)
 
 
 if __name__ == '__main__':
