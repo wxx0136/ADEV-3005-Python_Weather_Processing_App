@@ -1,3 +1,7 @@
+"""
+The entrance of this App.
+"""
+
 from weather_processor import WeatherProcessor
 
 
