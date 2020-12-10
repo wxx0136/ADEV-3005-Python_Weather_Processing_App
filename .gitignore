@@ -130,7 +130,6 @@ dmypy.json
 
 .idea
 /src/exam.py
-/src/weather.sqlite
 
 #ignore images
 /src/images/
