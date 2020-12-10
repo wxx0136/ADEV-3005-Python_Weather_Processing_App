@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module db_operations</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>db_operations</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href="../src">index</a><br><a href="file:e%3A%5Crrc%20course%5Conedrive%20-%20red%20river%20college%5Crrc%5C2020fa_term%205%5Cprogramming%20in%20python%5Cproject%5Cadev-3005-python_weather_processing_app%5Csrc%5Cdb_operations.py">e:\rrc course\onedrive - red river college\rrc\2020fa_term 5\programming in python\project\adev-3005-python_weather_processing_app\src\db_operations.py</a></font></td></tr></table>
+    <p><tt>There&nbsp;is&nbsp;one&nbsp;classes&nbsp;in&nbsp;this&nbsp;module.<br>
+&nbsp;<br>
+Class&nbsp;<a href="#DBOperations">DBOperations</a>&nbsp;is&nbsp;an&nbsp;sqlite&nbsp;database&nbsp;operation.</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="sqlite3.html">sqlite3</a><br>
+</td><td width="25%" valign=top></td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="db_operations.html#DBOperations">DBOperations</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="DBOperations">class <strong>DBOperations</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#DBOperations">DBOperations</a>(path:&nbsp;str)<br>
+&nbsp;<br>
+Use&nbsp;the&nbsp;Python&nbsp;sqlite3&nbsp;module&nbsp;to&nbsp;store&nbsp;the&nbsp;weather&nbsp;data&nbsp;in&nbsp;an&nbsp;SQLite&nbsp;database&nbsp;in&nbsp;the&nbsp;specified&nbsp;format.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="DBOperations-__enter__"><strong>__enter__</strong></a>(self)</dt><dd><tt>Create&nbsp;a&nbsp;database&nbsp;context&nbsp;manager.<br>
+:return:</tt></dd></dl>
+
+<dl><dt><a name="DBOperations-__exit__"><strong>__exit__</strong></a>(self, exc_type, exc_val, exc_tb)</dt><dd><tt>Close&nbsp;the&nbsp;database&nbsp;connection.<br>
+:param&nbsp;exc_type:<br>
+:param&nbsp;exc_val:<br>
+:param&nbsp;exc_tb:<br>
+:return:</tt></dd></dl>
+
+<dl><dt><a name="DBOperations-__init__"><strong>__init__</strong></a>(self, path: str)</dt><dd><tt>Build&nbsp;a&nbsp;new&nbsp;database&nbsp;connection.</tt></dd></dl>
+
+<dl><dt><a name="DBOperations-fetch_data"><strong>fetch_data</strong></a>(self, year: int, month: int = 0) -&gt; list</dt><dd><tt>Fetch&nbsp;the&nbsp;requested&nbsp;data&nbsp;for&nbsp;plotting.<br>
+:param&nbsp;year:<br>
+:param&nbsp;month:<br>
+:return:</tt></dd></dl>
+
+<dl><dt><a name="DBOperations-fetch_earliest_one"><strong>fetch_earliest_one</strong></a>(self) -&gt; list</dt><dd><tt>Fetch&nbsp;the&nbsp;earliest&nbsp;date&nbsp;in&nbsp;the&nbsp;database.<br>
+:return:</tt></dd></dl>
+
+<dl><dt><a name="DBOperations-fetch_last_one"><strong>fetch_last_one</strong></a>(self) -&gt; list</dt><dd><tt>Fetch&nbsp;the&nbsp;latest&nbsp;data&nbsp;in&nbsp;the&nbsp;database.<br>
+:return:</tt></dd></dl>
+
+<dl><dt><a name="DBOperations-initialize_db"><strong>initialize_db</strong></a>(self)</dt><dd><tt>Create&nbsp;a&nbsp;table&nbsp;if&nbsp;it&nbsp;not&nbsp;exists.<br>
+:return:</tt></dd></dl>
+
+<dl><dt><a name="DBOperations-purge_data"><strong>purge_data</strong></a>(self)</dt><dd><tt>Delete&nbsp;all&nbsp;the&nbsp;data&nbsp;from&nbsp;the&nbsp;DB&nbsp;for&nbsp;when&nbsp;the&nbsp;program&nbsp;fetches&nbsp;all&nbsp;new&nbsp;weather&nbsp;data.<br>
+:return:</tt></dd></dl>
+
+<dl><dt><a name="DBOperations-save_data"><strong>save_data</strong></a>(self, data_source: dict)</dt><dd><tt>Save&nbsp;new&nbsp;data&nbsp;to&nbsp;the&nbsp;DB,&nbsp;if&nbsp;it&nbsp;doesn't&nbsp;already&nbsp;exist&nbsp;(i.e.&nbsp;No&nbsp;duplicate&nbsp;data)<br>
+:param&nbsp;data_source:<br>
+:return:&nbsp;none</tt></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table></td></tr></table>
+</body></html>
