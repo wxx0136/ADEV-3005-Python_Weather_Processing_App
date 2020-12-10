@@ -285,7 +285,8 @@ class WeatherProcessor:
             if not start_year_data:
                 print('Warning: there is no data of year[{0}] in the database. Please update first.'.format(start_year))
             elif not end_year_data:
-                print('Warning: there is no data of year[{0}] in the database. Please update first.'.format(end_year_data))
+                print('Warning: there is no data of year[{0}] in the database. Please update first.'.format(
+                    end_year_data))
             else:
                 my_plot = PlotOperations()
                 my_plot.generate_box_plot(start_year, end_year)
@@ -302,8 +303,8 @@ class WeatherProcessor:
         try:
             month_data = self.my_db.fetch_data(specific_year, specific_month)
             if not month_data:
-                print('Warning: there is no data of [{0}-{1}] in the database. Please update first.'.format(specific_year,
-                                                                                                            specific_month))
+                print('Warning: there is no data of [{0}-{1}] in the database. Please update first.'.format(
+                    specific_year, specific_month))
             else:
                 my_plot = PlotOperations()
                 my_plot.generate_line_plot(specific_year, specific_month)

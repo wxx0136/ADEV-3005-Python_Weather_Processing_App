@@ -50,7 +50,8 @@ class DBOperations:
         """
         try:
             with DBOperations(self.db_name) as DBCM:
-                sql_initialize_db = """create table if not exists samples (id integer primary key autoincrement not null,
+                sql_initialize_db = """create table if not exists samples (
+                                            id integer primary key autoincrement not null,
                                             sample_date text not null UNIQUE,
                                             location text not null default %s,
                                             min_temp real not null,
