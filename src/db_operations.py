@@ -49,7 +49,7 @@ class DBOperations:
         :return:
         """
         try:
-            with DBOperations(self.db_name) as DBCM:
+            with DBOperations(self.db_name) as cursor:
                 sql_initialize_db = """create table if not exists samples (
                                             id integer primary key autoincrement not null,
                                             sample_date text not null UNIQUE,
@@ -57,7 +57,7 @@ class DBOperations:
                                             min_temp real not null,
                                             max_temp real not null,
                                             avg_temp real not null); """ % "'StationID=27174'"
-                DBCM.execute(sql_initialize_db)
+                cursor.execute(sql_initialize_db)
         except Exception as e:
             self.logger.error(e)
 
@@ -80,11 +80,11 @@ class DBOperations:
                         new_row.append('')
                 new_list.append(tuple(new_row))
 
-            with DBOperations(self.db_name) as DBCM:
+            with DBOperations(self.db_name) as cursor:
                 sql_save_data = """INSERT OR IGNORE INTO samples (sample_date,max_temp,min_temp,avg_temp) VALUES (?,?,?,
                 ?); """
                 for list_item in new_list:
-                    DBCM.execute(sql_save_data, list_item)
+                    cursor.execute(sql_save_data, list_item)
             print('Database updated.')
         except Exception as e:
             self.logger.error(e)
@@ -104,10 +104,10 @@ class DBOperations:
             else:
                 month_str = str(month)
 
-            with DBOperations(self.db_name) as DBCM:
+            with DBOperations(self.db_name) as cursor:
                 sql_fetch_year_date = f"""SELECT * FROM samples WHERE sample_date LIKE '{year}-{month_str}%';"""
-                DBCM.execute(sql_fetch_year_date)
-                fetch_weather = DBCM.fetchall()
+                cursor.execute(sql_fetch_year_date)
+                fetch_weather = cursor.fetchall()
             return fetch_weather
         except Exception as e:
             self.logger.error(e)
@@ -118,10 +118,10 @@ class DBOperations:
         :return:
         """
         try:
-            with DBOperations(self.db_name) as DBCM:
+            with DBOperations(self.db_name) as cursor:
                 sql_fetch_last_one = """SELECT min(sample_date) FROM samples;"""
-                DBCM.execute(sql_fetch_last_one)
-                fetch_weather = DBCM.fetchall()
+                cursor.execute(sql_fetch_last_one)
+                fetch_weather = cursor.fetchall()
             return fetch_weather
         except Exception as e:
             self.logger.error(e)
@@ -132,10 +132,10 @@ class DBOperations:
         :return:
         """
         try:
-            with DBOperations(self.db_name) as DBCM:
+            with DBOperations(self.db_name) as cursor:
                 sql_fetch_last_one = """SELECT max(sample_date) FROM samples;"""
-                DBCM.execute(sql_fetch_last_one)
-                fetch_weather = DBCM.fetchall()
+                cursor.execute(sql_fetch_last_one)
+                fetch_weather = cursor.fetchall()
             return fetch_weather
         except Exception as e:
             self.logger.error(e)
@@ -147,11 +147,11 @@ class DBOperations:
         """
         try:
             print('Purging all the data from the database... ')
-            with DBOperations(self.db_name) as DBCM:
+            with DBOperations(self.db_name) as cursor:
                 sql_purge_data_1 = """DELETE FROM samples;"""
                 sql_purge_data_2 = """DELETE FROM sqlite_sequence WHERE name = 'samples';"""
-                DBCM.execute(sql_purge_data_1)
-                DBCM.execute(sql_purge_data_2)
+                cursor.execute(sql_purge_data_1)
+                cursor.execute(sql_purge_data_2)
         except Exception as e:
             self.logger.error(e)
 
