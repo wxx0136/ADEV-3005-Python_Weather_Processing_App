@@ -7,5 +7,5 @@ Live Demo: https://repl.it/@wxx0136/weatherscraper
 
 # Screenshot
 <div align=center>
-<img src="https://github.com/wxx0136/FlappyBird/blob/main/docs/project_u3d.png">
+<img src="https://github.com/wxx0136/weather_scraper/blob/master/docs/project_python.png">
 </div>
