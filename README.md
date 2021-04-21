@@ -9,3 +9,7 @@ Live Demo: https://repl.it/@wxx0136/weatherscraper
 <div align=center>
 <img src="https://github.com/wxx0136/weather_scraper/blob/master/docs/project_python.png">
 </div>
+
+# Developers
+Xinxin Wei
+Longxun Jin
